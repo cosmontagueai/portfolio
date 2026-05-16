@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Константин Монтэге — ИИ сервисы</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:  #f5f0e8;
+      --sand:   #e8dece;
+      --brown:  #8c6a4a;
+      --dark:   #1a1410;
+      --mid:    #3d2e20;
+      --accent: #c49a6c;
+      --muted:  #a08060;
+      --white:  #fdfaf6;
+      --font-display: 'Cormorant Garamond', serif;
+      --font-body:    'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--dark);
+      font-family: var(--font-body);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 999; opacity: .4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 4rem;
+      background: rgba(245,240,232,.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(140,106,74,.12);
+      transition: padding .3s;
+    }
+    nav.shrunk { padding: .85rem 4rem; }
+    .nav-logo { font-family: var(--font-display); font-size: 1.3rem; font-weight: 400; letter-spacing: .06em; color: var(--mid); text-decoration: none; }
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links a { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--brown); }
+    .burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; }
+    .burger span { display: block; width: 24px; height: 1.5px; background: var(--mid); transition: transform .3s, opacity .3s; }
+    .burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; }
+    .burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    .mobile-menu { display: none; position: fixed; inset: 0; background: var(--cream); z-index: 90; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-family: var(--font-display); font-size: 1.9rem; font-weight: 300; color: var(--mid); text-decoration: none; letter-spacing: .04em; }
+    .mobile-menu a:hover { color: var(--brown); }
+
+    /* ── HERO ── */
+    .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 8rem 2rem 5rem; position: relative; overflow: hidden; }
+    .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(196,154,108,.18) 0%, transparent 70%), radial-gradient(ellipse 50% 40% at 80% 80%, rgba(140,106,74,.10) 0%, transparent 60%); }
+    .hero-eyebrow { font-size: .72rem; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.4rem; opacity: 0; animation: fadeUp .8s .2s forwards; }
+    .hero h1 { font-family: var(--font-display); font-size: clamp(3rem, 8vw, 7rem); font-weight: 300; line-height: 1.05; color: var(--mid); letter-spacing: -.01em; max-width: 840px; opacity: 0; animation: fadeUp .9s .4s forwards; }
+    .hero h1 em { font-style: italic; color: var(--brown); }
+    .hero-sub { margin-top: 1.8rem; font-size: 1.05rem; color: var(--muted); max-width: 560px; opacity: 0; animation: fadeUp .9s .65s forwards; }
+    .hero-cta { margin-top: 3rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; opacity: 0; animation: fadeUp .9s .85s forwards; }
+    .orb { position: absolute; border-radius: 50%; pointer-events: none; opacity: 0; animation: floatIn 1.4s ease forwards; }
+    .orb-1 { width: 340px; height: 340px; top: -80px; right: -80px; background: radial-gradient(circle, rgba(196,154,108,.22), transparent 70%); animation-delay: .3s; }
+    .orb-2 { width: 260px; height: 260px; bottom: 40px; left: -60px; background: radial-gradient(circle, rgba(140,106,74,.15), transparent 70%); animation-delay: .6s; }
+
+    /* ── BUTTONS ── */
+    .btn { display: inline-block; padding: .85rem 2.2rem; border-radius: 2px; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: background .25s, color .25s, transform .15s, box-shadow .25s; border: none; font-family: var(--font-body); font-weight: 400; }
+    .btn-primary { background: var(--brown); color: var(--white); }
+    .btn-primary:hover { background: var(--mid); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(61,46,32,.2); }
+    .btn-ghost { background: transparent; color: var(--brown); border: 1px solid var(--accent); }
+    .btn-ghost:hover { background: var(--accent); color: var(--white); transform: translateY(-2px); }
+    .btn-sm { padding: .6rem 1.5rem; font-size: .72rem; }
+    .btn-outline-light { background: transparent; color: var(--sand); border: 1px solid rgba(196,154,108,.5); }
+    .btn-outline-light:hover { background: var(--accent); color: var(--dark); border-color: var(--accent); transform: translateY(-2px); }
+
+    /* ── COMMONS ── */
+    section { padding: 6rem 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-label { font-size: .68rem; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); margin-bottom: .8rem; }
+    .section-title { font-family: var(--font-display); font-size: clamp(2rem,4vw,3.2rem); font-weight: 300; color: var(--mid); line-height: 1.2; }
+    .section-title em { font-style: italic; color: var(--brown); }
+    .divider { width: 48px; height: 1px; background: var(--accent); margin: 1.6rem 0; }
+
+    /* ── ABOUT ── */
+    #about { background: var(--white); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .about-frame { width: 100%; aspect-ratio: 3/4; background: linear-gradient(135deg, var(--sand) 0%, var(--cream) 60%, rgba(196,154,108,.3) 100%); border-radius: 2px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+    .about-frame-inner { width: 85%; height: 85%; border: 1px solid rgba(140,106,74,.25); border-radius: 2px; display: flex; align-items: center; justify-content: center; }
+    .portrait-icon { opacity: .3; }
+    .about-tag { position: absolute; bottom: -1rem; right: -1rem; background: var(--brown); color: var(--white); padding: .8rem 1.2rem; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; border-radius: 1px; }
+    .about-text-p { color: var(--muted); margin-bottom: 1.2rem; font-size: 1rem; }
+    .stats { display: flex; gap: 2.5rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--sand); }
+    .stat-num { font-family: var(--font-display); font-size: 2.4rem; font-weight: 300; color: var(--brown); line-height: 1; }
+    .stat-label { font-size: .72rem; color: var(--muted); letter-spacing: .08em; margin-top: .3rem; }
+
+    /* ── SERVICES ── */
+    #services { background: var(--cream); }
+    .services-intro { max-width: 580px; margin-bottom: 3.5rem; }
+    .services-intro p { color: var(--muted); font-size: .95rem; margin-top: .8rem; }
+    .service-cards-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.5px; background: var(--sand); border: 1.5px solid var(--sand); }
+    .svc-card { background: var(--white); padding: 2.4rem 1.8rem 2rem; display: flex; flex-direction: column; transition: background .25s; position: relative; overflow: hidden; }
+    .svc-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .35s; }
+    .svc-card:hover { background: var(--cream); }
+    .svc-card:hover::after { transform: scaleX(1); }
+    .svc-icon { width: 40px; height: 40px; margin-bottom: 1.2rem; color: var(--accent); }
+    .svc-card h3 { font-family: var(--font-display); font-size: 1.35rem; font-weight: 400; color: var(--mid); margin-bottom: .6rem; line-height: 1.25; }
+    .svc-card p { font-size: .87rem; color: var(--muted); line-height: 1.6; flex: 1; }
+    .svc-price { font-family: var(--font-display); font-size: 1.1rem; font-style: italic; color: var(--brown); margin: 1.2rem 0 1rem; }
+    .svc-btn-wrap { margin-top: auto; }
+
+    /* ── PORTFOLIO SECTIONS ── */
+    .port-section { padding: 5rem 2rem; }
+    .port-section-1 { background: #18120d; }
+    .port-section-2 { background: #0a1a10; }
+    .port-section-3 { background: #1a1010; }
+    .port-section .section-label { color: var(--accent); }
+    .port-section .section-title { color: var(--sand); }
+    .port-section .section-title em { color: var(--accent); }
+    .port-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; margin-bottom: 2.8rem; flex-wrap: wrap; }
+    .port-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .8rem; }
+
+    /* ── PORT ITEM ── */
+    .port-item { position: relative; overflow: hidden; border-radius: 1px; cursor: pointer; }
+
+    /* The image fills the card */
+    .port-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+    }
+    .port-item:hover .port-img { transform: scale(1.07); }
+
+    /* Fallback gradient shown behind image (visible if image missing) */
+    .port-fallback {
+      position: absolute; inset: 0;
+    }
+
+    .port-thumb {
+      width: 100%; aspect-ratio: 3/4;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: .9rem; font-style: italic;
+      color: transparent; position: relative; z-index: 1;
+    }
+    .port-thumb.card34 { aspect-ratio: 3/4; }
+
+    .port-overlay {
+      position: absolute; inset: 0; z-index: 2;
+      background: rgba(20,14,10,.6);
+      display: flex; flex-direction: column;
+      align-items: flex-start; justify-content: flex-end;
+      padding: 1.4rem; opacity: 0; transition: opacity .3s;
+    }
+    .port-item:hover .port-overlay { opacity: 1; }
+    .port-title-label { font-family: var(--font-display); font-size: 1.1rem; color: var(--white); font-weight: 400; }
+    .port-cat-label { font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-top: .3rem; }
+
+    /* fallback gradients */
+    .g1  { background: linear-gradient(155deg,#1a1208,#5a3010,#9c6030); }
+    .g2  { background: linear-gradient(140deg,#100818,#30183a,#703870); }
+    .g3  { background: linear-gradient(150deg,#081510,#183a25,#3a7050); }
+    .g4  { background: linear-gradient(160deg,#181008,#4a3010,#8a5820); }
+    .g5  { background: linear-gradient(145deg,#100820,#281840,#504090); }
+    .g6  { background: linear-gradient(155deg,#0a1018,#182030,#305860); }
+    .g7  { background: linear-gradient(150deg,#181210,#382820,#605040); }
+    .g8  { background: linear-gradient(140deg,#100a18,#28183a,#4a3070); }
+    .g9  { background: linear-gradient(160deg,#181008,#3a2808,#706010); }
+    .g10 { background: linear-gradient(145deg,#0a1408,#202e10,#4a5a20); }
+    .g11 { background: linear-gradient(145deg,#181010,#3a1820,#703040); }
+    .g12 { background: linear-gradient(155deg,#101810,#203a20,#407040); }
+    .g-bw  { background: linear-gradient(145deg,#101010,#282828,#484848); filter: saturate(0) contrast(.85); }
+    .g-bw2 { background: linear-gradient(150deg,#181818,#303028,#484840); filter: saturate(0) contrast(.9); }
+    .g-bw3 { background: linear-gradient(140deg,#101010,#282820,#404030); filter: saturate(0) contrast(.8); }
+
+    /* ── LOGOS ── */
+    #logos { background: var(--sand); padding: 4rem 2rem; }
+    #logos .section-label { text-align: center; }
+    #logos .section-title { text-align: center; margin-bottom: 3rem; }
+    .logos-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 2.5rem;
+    }
+    .logo-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .8rem;
+    }
+    .logo-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1.5px solid var(--sand);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(61,46,32,.08);
+      transition: transform .3s, box-shadow .3s;
+    }
+    .logo-circle:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(61,46,32,.15);
+    }
+    .logo-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    /* fallback если картинки нет */
+    .logo-circle .logo-fallback {
+      width: 100%;
+      height: 100%;
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .6rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .logo-name {
+      font-size: .72rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+    }
+    @media (max-width: 600px) { .logo-circle { width: 75px; height: 75px; } .logos-grid { gap: 1.5rem; } }
+
+    .port-thumb.banner16 { aspect-ratio: 16/5; }
+
+    /* ── RESTORE ── */
+    .restore-pairs { display: flex; flex-direction: column; gap: 1.2rem; }
+    .restore-pair { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+    .restore-label { position: absolute; top: .8rem; left: .8rem; z-index: 3; font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; background: rgba(0,0,0,.55); color: rgba(255,255,255,.6); padding: .22rem .5rem; border-radius: 1px; }
+    .restore-label.after { color: var(--accent); }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--white); }
+    .contact-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .contact-info-p { color: var(--muted); margin-bottom: 2rem; }
+    .contact-detail { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
+    .contact-detail-icon { width: 38px; height: 38px; border: 1px solid var(--sand); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--brown); }
+    .contact-detail a, .contact-detail span { color: var(--mid); text-decoration: none; font-size: .95rem; }
+    .contact-detail a:hover { color: var(--brown); }
+    .contact-form { display: flex; flex-direction: column; gap: 1.2rem; }
+    .form-group { display: flex; flex-direction: column; gap: .4rem; }
+    .form-group label { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+    .form-group input, .form-group textarea, .form-group select { background: var(--cream); border: 1px solid var(--sand); border-radius: 2px; padding: .85rem 1rem; font-family: var(--font-body); font-size: .95rem; color: var(--dark); outline: none; transition: border-color .2s, box-shadow .2s; width: 100%; appearance: none; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(196,154,108,.12); }
+    .form-group textarea { min-height: 130px; resize: vertical; }
+    .form-success { display: none; text-align: center; padding: 2rem; background: rgba(196,154,108,.08); border: 1px solid var(--sand); border-radius: 2px; }
+    .form-success p { font-family: var(--font-display); font-size: 1.4rem; font-style: italic; color: var(--brown); }
+
+    footer { background: var(--dark); color: var(--muted); text-align: center; padding: 2.5rem 2rem; font-size: .8rem; letter-spacing: .06em; }
+    footer span { color: var(--accent); }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes floatIn { from { opacity:0; transform:scale(.8); } to { opacity:1; transform:scale(1); } }
+    .reveal { opacity:0; transform:translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity:1; transform:none; }
+
+    @media (max-width: 1024px) { .service-cards-row { grid-template-columns: 1fr 1fr; } .port-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 900px) { nav { padding: 1.2rem 2rem; } nav.shrunk { padding: .8rem 2rem; } .nav-links { display: none; } .burger { display: flex; } .about-grid { grid-template-columns: 1fr; gap: 3rem; } .about-visual { max-width: 300px; } .contact-wrap { grid-template-columns: 1fr; gap: 3rem; } .port-header { flex-direction: column; align-items: flex-start; } }
+    @media (max-width: 600px) { section, .port-section { padding: 4rem 1.2rem; } .service-cards-row { grid-template-columns: 1fr; } .port-grid { grid-template-columns: 1fr 1fr; gap: .5rem; } .restore-pair { grid-template-columns: 1fr; } .stats { gap: 1.5rem; } }
+  </style>
+</head>
+<body>
+
+  <nav id="navbar">
+    <a href="#" class="nav-logo">Константин Монтэге · ИИ сервисы</a>
+    <ul class="nav-links">
+      <li><a href="#about">Обо мне</a></li>
+      <li><a href="#services">Услуги</a></li>
+      <li><a href="#logos">Платформы</a></li>
+      <li><a href="#logos-work">Логотипы</a></li>
+      <li><a href="#port-photo">ИИ Фото</a></li>
+      <li><a href="#port-banners">Баннеры</a></li>
+      <li><a href="#port-cards">Карточки</a></li>
+      <li><a href="#port-restore">Реставрация</a></li>
+      <li><a href="#contact">Контакты</a></li>
+    </ul>
+    <button class="burger" id="burger" aria-label="Меню"><span></span><span></span><span></span></button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about"        onclick="closeMenu()">Обо мне</a>
+    <a href="#services"     onclick="closeMenu()">Услуги</a>
+    <a href="#logos"       onclick="closeMenu()">Платформы</a>
+    <a href="#logos-work"  onclick="closeMenu()">Логотипы</a>
+    <a href="#port-photo"   onclick="closeMenu()">ИИ Фотосессии</a>
+    <a href="#port-banners" onclick="closeMenu()">Баннеры</a>
+    <a href="#port-cards"   onclick="closeMenu()">Карточки товаров</a>
+    <a href="#port-restore" onclick="closeMenu()">Реставрация фото</a>
+    <a href="#contact"      onclick="closeMenu()">Контакты</a>
+  </div>
+
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <!-- БОТАНИЧЕСКИЙ ФОН — плотный иллюстративный стиль -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1440 900">
+      <defs>
+        <style>
+          .s{stroke:#5c3e20;fill:none}
+          .s1{stroke:#5c3e20;fill:none;stroke-width:1.6}
+          .s2{stroke:#6b4a28;fill:none;stroke-width:1}
+          .s3{stroke:#7a5830;fill:none;stroke-width:.7}
+          .la{fill:#7a5c2e}
+          .lb{fill:#9a7838}
+          .lc{fill:#6a4e28}
+          .pa{fill:#8c6a30}
+          .pb{fill:#7a5828}
+          .pc{fill:#a07838}
+          .ct{fill:#c49a5a}
+          .dt{fill:#9a7832}
+        </style>
+      </defs>
+
+      <!-- ══════════════════════════════════════════════ -->
+      <!--  Л Е В А Я   П О Л О В И Н А                -->
+      <!-- ══════════════════════════════════════════════ -->
+
+      <!-- Главный левый стебель -->
+      <g opacity=".28">
+        <path class="s1" d="M55 910 Q40 820 52 730 Q66 630 44 530 Q24 440 50 340 Q70 260 54 160 Q42 90 62 10"/>
+
+        <!-- Листья вдоль главного стебля — крупные парные -->
+        <!-- пара 1 — низ -->
+        <path class="la" d="M52 730 Q-4 696 -24 654 Q12 646 42 672 Q52 700 52 730Z"/>
+        <path class="la" d="M52 730 Q106 694 128 652 Q92 644 62 670 Q52 698 52 730Z"/>
+        <path class="s3" d="M52 730 Q24 706 -10 662"/>
+        <path class="s3" d="M52 730 Q80 704 112 660"/>
+        <!-- пара 2 -->
+        <path class="lb" d="M46 630 Q-8 598 -28 558 Q8 550 38 574 Q48 600 46 630Z"/>
+        <path class="lb" d="M46 630 Q100 596 122 556 Q86 548 56 572 Q46 598 46 630Z"/>
+        <path class="s3" d="M46 630 Q18 608 -14 566"/>
+        <path class="s3" d="M46 630 Q74 606 108 564"/>
+        <!-- пара 3 -->
+        <path class="la" d="M48 528 Q-6 498 -26 460 Q10 452 40 474 Q50 500 48 528Z"/>
+        <path class="la" d="M48 528 Q102 496 124 458 Q88 450 58 472 Q48 498 48 528Z"/>
+        <!-- пара 4 -->
+        <path class="lc" d="M50 428 Q-2 400 -20 364 Q14 357 44 378 Q52 402 50 428Z"/>
+        <path class="lc" d="M50 428 Q102 398 122 362 Q88 355 58 376 Q50 400 50 428Z"/>
+        <!-- пара 5 -->
+        <path class="lb" d="M52 330 Q2 302 -16 268 Q18 261 46 282 Q54 306 52 330Z"/>
+        <path class="lb" d="M52 330 Q102 300 122 266 Q88 259 58 280 Q50 304 52 330Z"/>
+        <!-- пара 6 — верх -->
+        <path class="la" d="M54 228 Q6 202 -12 168 Q22 161 48 182 Q56 206 54 228Z"/>
+        <path class="la" d="M54 228 Q102 200 122 166 Q88 159 58 180 Q52 204 54 228Z"/>
+        <path class="lc" d="M58 128 Q12 104 -6 72 Q26 66 50 86 Q60 108 58 128Z"/>
+        <path class="lc" d="M58 128 Q104 102 124 70 Q90 64 60 84 Q56 106 58 128Z"/>
+      </g>
+
+      <!-- Боковые ветви левой стороны -->
+      <g opacity=".26">
+        <!-- ветвь 1 — от низа -->
+        <path class="s2" d="M48 680 Q14 648 -10 618"/>
+        <path class="la" d="M14 648 Q-14 628 -22 604 Q-2 600 10 618 Q14 634 14 648Z"/>
+        <path class="lb" d="M14 648 Q42 626 50 602 Q30 598 14 616 Q10 632 14 648Z"/>
+        <path class="s3" d="M14 648 Q-8 632 -16 610"/>
+        <path class="s3" d="M14 648 Q36 630 44 608"/>
+
+        <!-- ветвь 2 -->
+        <path class="s2" d="M44 578 Q8 548 -16 518"/>
+        <path class="lb" d="M8 548 Q-20 528 -28 506 Q-8 502 4 520 Q8 534 8 548Z"/>
+        <path class="la" d="M8 548 Q36 526 44 504 Q24 500 8 518 Q4 532 8 548Z"/>
+        <path class="s3" d="M8 548 Q-14 532 -22 510"/>
+
+        <!-- ветвь 3 -->
+        <path class="s2" d="M46 478 Q10 450 -14 422"/>
+        <path class="la" d="M10 450 Q-16 430 -24 408 Q-4 404 8 422 Q12 436 10 450Z"/>
+        <path class="lb" d="M10 450 Q38 428 46 406 Q26 402 10 420 Q6 434 10 450Z"/>
+
+        <!-- ветвь 4 -->
+        <path class="s2" d="M48 378 Q12 350 -12 322"/>
+        <path class="lc" d="M12 350 Q-14 330 -22 308 Q-2 304 10 322 Q14 336 12 350Z"/>
+        <path class="la" d="M12 350 Q40 328 48 306 Q28 302 12 320 Q8 334 12 350Z"/>
+
+        <!-- ветвь 5 -->
+        <path class="s2" d="M50 278 Q14 252 -10 226"/>
+        <path class="lb" d="M14 252 Q-12 232 -20 210 Q0 206 12 224 Q16 238 14 252Z"/>
+        <path class="lc" d="M14 252 Q42 230 50 208 Q30 204 14 222 Q10 236 14 252Z"/>
+
+        <!-- ветвь 6 — малые тонкие -->
+        <path class="s3" d="M52 178 Q18 156 0 132"/>
+        <path class="lb" d="M18 156 Q-4 138 -10 116 Q8 114 14 132 Q18 144 18 156Z"/>
+        <path class="la" d="M18 156 Q42 136 50 114 Q30 112 18 130 Q14 142 18 156Z"/>
+
+        <path class="s3" d="M56 98 Q24 78 8 56"/>
+        <path class="lc" d="M24 78 Q4 60 -2 40 Q14 38 20 56 Q24 68 24 78Z"/>
+        <path class="lb" d="M24 78 Q46 58 54 38 Q34 36 22 54 Q18 66 24 78Z"/>
+      </g>
+
+      <!-- Ягоды и точки левая сторона -->
+      <g opacity=".3">
+        <circle class="dt" cx="32" cy="588" r="4.5"/>
+        <circle class="dt" cx="18" cy="578" r="3.5"/>
+        <circle class="dt" cx="26" cy="566" r="4"/>
+        <circle class="dt" cx="40" cy="572" r="3"/>
+        <circle class="dt" cx="14" cy="560" r="2.5"/>
+
+        <circle class="dt" cx="28" cy="398" r="4"/>
+        <circle class="dt" cx="14" cy="388" r="3"/>
+        <circle class="dt" cx="22" cy="376" r="3.5"/>
+        <circle class="dt" cx="36" cy="382" r="2.5"/>
+
+        <circle class="dt" cx="30" cy="198" r="3.5"/>
+        <circle class="dt" cx="16" cy="188" r="3"/>
+        <circle class="dt" cx="24" cy="176" r="4"/>
+        <circle class="dt" cx="38" cy="182" r="2.5"/>
+        <circle class="dt" cx="12" cy="174" r="2"/>
+
+        <circle class="dt" cx="26" cy="80" r="3"/>
+        <circle class="dt" cx="12" cy="72" r="2.5"/>
+        <circle class="dt" cx="20" cy="62" r="3.5"/>
+      </g>
+
+      <!-- Дополнительные тонкие веточки слева — заполнение -->
+      <g opacity=".2">
+        <path class="s3" d="M30 750 Q-10 730 -24 706"/>
+        <path class="la" d="M-10 730 Q-30 714 -34 694 Q-16 692 -8 708 Q-8 720 -10 730Z"/>
+        <path class="s3" d="M36 460 Q-8 440 -22 418"/>
+        <path class="lb" d="M-8 440 Q-28 424 -32 404 Q-14 402 -6 418 Q-6 430 -8 440Z"/>
+        <path class="s3" d="M42 260 Q2 242 -12 220"/>
+        <path class="lc" d="M2 242 Q-18 226 -22 206 Q-4 204 2 220 Q4 232 2 242Z"/>
+      </g>
+
+      <!-- ══════════════════════════════════════════════ -->
+      <!--  П Р А В А Я   П О Л О В И Н А               -->
+      <!-- ══════════════════════════════════════════════ -->
+
+      <g opacity=".28">
+        <path class="s1" d="M1385 910 Q1400 820 1388 730 Q1374 630 1396 530 Q1416 440 1390 340 Q1370 260 1386 160 Q1398 90 1378 10"/>
+
+        <path class="la" d="M1388 730 Q1444 696 1464 654 Q1428 646 1398 672 Q1388 700 1388 730Z"/>
+        <path class="la" d="M1388 730 Q1334 694 1312 652 Q1348 644 1378 670 Q1388 698 1388 730Z"/>
+        <path class="s3" d="M1388 730 Q1416 706 1450 662"/>
+        <path class="s3" d="M1388 730 Q1360 704 1328 660"/>
+
+        <path class="lb" d="M1394 630 Q1448 598 1468 558 Q1432 550 1402 574 Q1392 600 1394 630Z"/>
+        <path class="lb" d="M1394 630 Q1340 596 1318 556 Q1354 548 1384 572 Q1394 598 1394 630Z"/>
+        <path class="s3" d="M1394 630 Q1422 608 1454 566"/>
+        <path class="s3" d="M1394 630 Q1366 606 1332 564"/>
+
+        <path class="la" d="M1392 528 Q1446 498 1466 460 Q1430 452 1400 474 Q1390 500 1392 528Z"/>
+        <path class="la" d="M1392 528 Q1338 496 1316 458 Q1352 450 1382 472 Q1392 498 1392 528Z"/>
+
+        <path class="lc" d="M1390 428 Q1442 400 1460 364 Q1426 357 1396 378 Q1388 402 1390 428Z"/>
+        <path class="lc" d="M1390 428 Q1338 398 1318 362 Q1352 355 1382 376 Q1390 400 1390 428Z"/>
+
+        <path class="lb" d="M1388 330 Q1438 302 1456 268 Q1422 261 1394 282 Q1386 306 1388 330Z"/>
+        <path class="lb" d="M1388 330 Q1338 300 1318 266 Q1352 259 1382 280 Q1390 304 1388 330Z"/>
+
+        <path class="la" d="M1386 228 Q1434 202 1452 168 Q1418 161 1392 182 Q1384 206 1386 228Z"/>
+        <path class="la" d="M1386 228 Q1338 200 1318 166 Q1352 159 1382 180 Q1388 204 1386 228Z"/>
+
+        <path class="lc" d="M1382 128 Q1428 104 1446 72 Q1414 66 1390 86 Q1380 108 1382 128Z"/>
+        <path class="lc" d="M1382 128 Q1336 102 1316 70 Q1350 64 1380 84 Q1384 106 1382 128Z"/>
+      </g>
+
+      <g opacity=".26">
+        <path class="s2" d="M1392 680 Q1426 648 1450 618"/>
+        <path class="la" d="M1426 648 Q1454 628 1462 604 Q1442 600 1430 618 Q1426 634 1426 648Z"/>
+        <path class="lb" d="M1426 648 Q1398 626 1390 602 Q1410 598 1426 616 Q1430 632 1426 648Z"/>
+        <path class="s3" d="M1426 648 Q1448 632 1456 610"/>
+        <path class="s3" d="M1426 648 Q1404 630 1396 608"/>
+
+        <path class="s2" d="M1396 578 Q1432 548 1456 518"/>
+        <path class="lb" d="M1432 548 Q1460 528 1468 506 Q1448 502 1436 520 Q1432 534 1432 548Z"/>
+        <path class="la" d="M1432 548 Q1404 526 1396 504 Q1416 500 1432 518 Q1436 532 1432 548Z"/>
+
+        <path class="s2" d="M1394 478 Q1430 450 1454 422"/>
+        <path class="la" d="M1430 450 Q1456 430 1464 408 Q1444 404 1432 422 Q1428 436 1430 450Z"/>
+        <path class="lb" d="M1430 450 Q1402 428 1394 406 Q1414 402 1430 420 Q1434 434 1430 450Z"/>
+
+        <path class="s2" d="M1392 378 Q1428 350 1452 322"/>
+        <path class="lc" d="M1428 350 Q1454 330 1462 308 Q1442 304 1430 322 Q1426 336 1428 350Z"/>
+        <path class="la" d="M1428 350 Q1400 328 1392 306 Q1412 302 1428 320 Q1432 334 1428 350Z"/>
+
+        <path class="s2" d="M1390 278 Q1426 252 1450 226"/>
+        <path class="lb" d="M1426 252 Q1452 232 1460 210 Q1440 206 1428 224 Q1424 238 1426 252Z"/>
+        <path class="lc" d="M1426 252 Q1398 230 1390 208 Q1410 204 1426 222 Q1430 236 1426 252Z"/>
+
+        <path class="s3" d="M1388 178 Q1422 156 1440 132"/>
+        <path class="lb" d="M1422 156 Q1444 138 1450 116 Q1432 114 1426 132 Q1422 144 1422 156Z"/>
+        <path class="la" d="M1422 156 Q1398 136 1390 114 Q1410 112 1422 130 Q1426 142 1422 156Z"/>
+
+        <path class="s3" d="M1384 98 Q1416 78 1432 56"/>
+        <path class="lc" d="M1416 78 Q1436 60 1442 40 Q1426 38 1420 56 Q1416 68 1416 78Z"/>
+        <path class="lb" d="M1416 78 Q1394 58 1386 38 Q1406 36 1418 54 Q1422 66 1416 78Z"/>
+      </g>
+
+      <g opacity=".3">
+        <circle class="dt" cx="1408" cy="588" r="4.5"/>
+        <circle class="dt" cx="1422" cy="578" r="3.5"/>
+        <circle class="dt" cx="1414" cy="566" r="4"/>
+        <circle class="dt" cx="1400" cy="572" r="3"/>
+        <circle class="dt" cx="1426" cy="560" r="2.5"/>
+
+        <circle class="dt" cx="1412" cy="398" r="4"/>
+        <circle class="dt" cx="1426" cy="388" r="3"/>
+        <circle class="dt" cx="1418" cy="376" r="3.5"/>
+        <circle class="dt" cx="1404" cy="382" r="2.5"/>
+
+        <circle class="dt" cx="1410" cy="198" r="3.5"/>
+        <circle class="dt" cx="1424" cy="188" r="3"/>
+        <circle class="dt" cx="1416" cy="176" r="4"/>
+        <circle class="dt" cx="1402" cy="182" r="2.5"/>
+        <circle class="dt" cx="1428" cy="174" r="2"/>
+
+        <circle class="dt" cx="1414" cy="80" r="3"/>
+        <circle class="dt" cx="1428" cy="72" r="2.5"/>
+        <circle class="dt" cx="1420" cy="62" r="3.5"/>
+      </g>
+
+      <!-- ══════════════════════════════════════════════ -->
+      <!--  Ц В Е Т Ы   В Е Р Х Н И Е                 -->
+      <!-- ══════════════════════════════════════════════ -->
+
+      <!-- Цветок верх-лево крупный -->
+      <g opacity=".3" transform="translate(310 30)">
+        <path class="s2" d="M0 80 Q-4 50 0 10"/>
+        <path class="la" d="M0 55 Q-32 38 -44 14 Q-22 8 -6 28 Q0 42 0 55Z"/>
+        <path class="lb" d="M0 55 Q32 36 44 12 Q22 6 6 26 Q0 40 0 55Z"/>
+        <g transform="translate(0,10)">
+          <ellipse class="pa" cx="0" cy="-22" rx="11" ry="23"/>
+          <ellipse class="pa" cx="20" cy="-14" rx="11" ry="23" transform="rotate(54 20 -14)"/>
+          <ellipse class="pb" cx="22" cy="9" rx="11" ry="23" transform="rotate(114 22 9)"/>
+          <ellipse class="pb" cx="0" cy="22" rx="11" ry="23"/>
+          <ellipse class="pb" cx="-22" cy="9" rx="11" ry="23" transform="rotate(-114 -22 9)"/>
+          <ellipse class="pa" cx="-20" cy="-14" rx="11" ry="23" transform="rotate(-54 -20 -14)"/>
+          <path class="s3" d="M0 0 Q0 -14 0 -22"/>
+          <path class="s3" d="M0 0 Q12 -8 20 -14"/>
+          <path class="s3" d="M0 0 Q14 5 22 9"/>
+          <path class="s3" d="M0 0 Q0 14 0 22"/>
+          <path class="s3" d="M0 0 Q-14 5 -22 9"/>
+          <path class="s3" d="M0 0 Q-12 -8 -20 -14"/>
+          <circle class="ct" r="10"/>
+          <circle fill="#e8d090" opacity=".5" r="5"/>
+        </g>
+      </g>
+
+      <!-- Цветок верх-право крупный -->
+      <g opacity=".3" transform="translate(1130 28)">
+        <path class="s2" d="M0 78 Q4 48 0 8"/>
+        <path class="lb" d="M0 52 Q-30 36 -42 12 Q-20 6 -4 26 Q0 40 0 52Z"/>
+        <path class="la" d="M0 52 Q30 34 42 10 Q20 4 4 24 Q0 38 0 52Z"/>
+        <g transform="translate(0,8)">
+          <ellipse class="pb" cx="0" cy="-21" rx="10" ry="22"/>
+          <ellipse class="pb" cx="19" cy="-13" rx="10" ry="22" transform="rotate(54 19 -13)"/>
+          <ellipse class="pa" cx="21" cy="8" rx="10" ry="22" transform="rotate(114 21 8)"/>
+          <ellipse class="pa" cx="0" cy="21" rx="10" ry="22"/>
+          <ellipse class="pa" cx="-21" cy="8" rx="10" ry="22" transform="rotate(-114 -21 8)"/>
+          <ellipse class="pb" cx="-19" cy="-13" rx="10" ry="22" transform="rotate(-54 -19 -13)"/>
+          <path class="s3" d="M0 0 Q0 -13 0 -21"/>
+          <path class="s3" d="M0 0 Q11 -7 19 -13"/>
+          <path class="s3" d="M0 0 Q13 4 21 8"/>
+          <path class="s3" d="M0 0 Q0 13 0 21"/>
+          <path class="s3" d="M0 0 Q-13 4 -21 8"/>
+          <path class="s3" d="M0 0 Q-11 -7 -19 -13"/>
+          <circle class="ct" r="9"/>
+          <circle fill="#e8d090" opacity=".5" r="4.5"/>
+        </g>
+      </g>
+
+      <!-- Маленькие цветки и бутоны сверху центр -->
+      <g opacity=".25">
+        <g transform="translate(560 20)">
+          <path class="s3" d="M0 52 Q0 28 0 4"/>
+          <path class="la" d="M0 36 Q-20 24 -28 6 Q-12 2 -2 18 Q0 28 0 36Z"/>
+          <path class="lb" d="M0 36 Q20 22 28 4 Q12 0 2 16 Q0 26 0 36Z"/>
+          <g transform="translate(0,4)">
+            <ellipse class="pa" cx="0" cy="-14" rx="7" ry="15"/>
+            <ellipse class="pa" cx="13" cy="-8" rx="7" ry="15" transform="rotate(54 13 -8)"/>
+            <ellipse class="pb" cx="14" cy="6" rx="7" ry="15" transform="rotate(112 14 6)"/>
+            <ellipse class="pb" cx="0" cy="14" rx="7" ry="15"/>
+            <ellipse class="pb" cx="-14" cy="6" rx="7" ry="15" transform="rotate(-112 -14 6)"/>
+            <ellipse class="pa" cx="-13" cy="-8" rx="7" ry="15" transform="rotate(-54 -13 -8)"/>
+            <circle class="ct" r="6.5"/>
+          </g>
+        </g>
+
+        <g transform="translate(880 18)">
+          <path class="s3" d="M0 50 Q0 26 0 2"/>
+          <path class="lb" d="M0 34 Q-18 22 -26 4 Q-10 0 -2 16 Q0 26 0 34Z"/>
+          <path class="la" d="M0 34 Q18 20 26 2 Q10 -2 2 14 Q0 24 0 34Z"/>
+          <g transform="translate(0,2)">
+            <ellipse class="pb" cx="0" cy="-13" rx="7" ry="14"/>
+            <ellipse class="pb" cx="12" cy="-8" rx="7" ry="14" transform="rotate(54 12 -8)"/>
+            <ellipse class="pa" cx="13" cy="5" rx="7" ry="14" transform="rotate(112 13 5)"/>
+            <ellipse class="pa" cx="0" cy="13" rx="7" ry="14"/>
+            <ellipse class="pa" cx="-13" cy="5" rx="7" ry="14" transform="rotate(-112 -13 5)"/>
+            <ellipse class="pb" cx="-12" cy="-8" rx="7" ry="14" transform="rotate(-54 -12 -8)"/>
+            <circle class="ct" r="6"/>
+          </g>
+        </g>
+
+        <!-- бутоны сверху -->
+        <g transform="translate(440 15)">
+          <path class="s3" d="M0 42 Q0 22 0 0"/>
+          <path class="pa" d="M0 0 Q-8 -14 -6 -26 Q0 -30 6 -26 Q8 -14 0 0Z"/>
+          <path class="pb" d="M0 0 Q10 -12 12 -24 Q6 -28 0 -18 Q-1 -8 0 0Z"/>
+          <path class="pb" d="M0 0 Q-10 -12 -12 -24 Q-6 -28 0 -18 Q1 -8 0 0Z"/>
+          <path class="la" d="M0 16 Q-16 8 -22 -4 Q-8 -7 -2 6 Q0 12 0 16Z"/>
+          <path class="lb" d="M0 16 Q16 6 22 -6 Q8 -9 2 4 Q0 10 0 16Z"/>
+        </g>
+
+        <g transform="translate(1000 14)">
+          <path class="s3" d="M0 40 Q0 20 0 -2"/>
+          <path class="pb" d="M0 -2 Q-7 -16 -5 -28 Q0 -32 5 -28 Q7 -16 0 -2Z"/>
+          <path class="pa" d="M0 -2 Q9 -14 11 -26 Q5 -30 0 -20 Q-1 -10 0 -2Z"/>
+          <path class="pa" d="M0 -2 Q-9 -14 -11 -26 Q-5 -30 0 -20 Q1 -10 0 -2Z"/>
+          <path class="lb" d="M0 14 Q-15 6 -21 -6 Q-7 -9 -1 4 Q0 10 0 14Z"/>
+          <path class="la" d="M0 14 Q15 4 21 -8 Q7 -11 1 2 Q0 8 0 14Z"/>
+        </g>
+      </g>
+
+      <!-- ══════════════════════════════════════════════ -->
+      <!--  Ц В Е Т Ы   Н И Ж Н И Е   (обильно)        -->
+      <!-- ══════════════════════════════════════════════ -->
+
+      <!-- Цветок нижний 1 — крупный слева -->
+      <g opacity=".3" transform="translate(188 858)">
+        <path class="s1" d="M0 40 Q-6 10 0 -30"/>
+        <path class="la" d="M0 18 Q-36 0 -50 -22 Q-26 -28 -8 -10 Q0 4 0 18Z"/>
+        <path class="lb" d="M0 18 Q36 -2 50 -24 Q26 -30 8 -12 Q0 2 0 18Z"/>
+        <g transform="translate(0,-30)">
+          <ellipse class="pa" cx="0" cy="-24" rx="12" ry="26"/>
+          <ellipse class="pa" cx="22" cy="-16" rx="12" ry="26" transform="rotate(54 22 -16)"/>
+          <ellipse class="pb" cx="24" cy="10" rx="12" ry="26" transform="rotate(114 24 10)"/>
+          <ellipse class="pb" cx="0" cy="24" rx="12" ry="26"/>
+          <ellipse class="pb" cx="-24" cy="10" rx="12" ry="26" transform="rotate(-114 -24 10)"/>
+          <ellipse class="pa" cx="-22" cy="-16" rx="12" ry="26" transform="rotate(-54 -22 -16)"/>
+          <path class="s3" d="M0 0 Q0 -16 0 -24"/>
+          <path class="s3" d="M0 0 Q13 -9 22 -16"/>
+          <path class="s3" d="M0 0 Q15 6 24 10"/>
+          <path class="s3" d="M0 0 Q0 16 0 24"/>
+          <path class="s3" d="M0 0 Q-15 6 -24 10"/>
+          <path class="s3" d="M0 0 Q-13 -9 -22 -16"/>
+          <circle class="ct" r="11"/>
+          <circle fill="#e8d090" opacity=".6" r="6"/>
+          <circle stroke="#9a7838" stroke-width=".6" fill="none" r="11"/>
+        </g>
+      </g>
+
+      <!-- Цветок нижний 2 — по центру слева -->
+      <g opacity=".28" transform="translate(430 876)">
+        <path class="s2" d="M0 28 Q-2 8 0 -20"/>
+        <path class="lb" d="M0 14 Q-24 2 -34 -14 Q-16 -18 -4 -4 Q0 6 0 14Z"/>
+        <path class="la" d="M0 14 Q24 0 34 -16 Q16 -20 4 -6 Q0 4 0 14Z"/>
+        <g transform="translate(0,-20)">
+          <ellipse class="pb" cx="0" cy="-18" rx="9" ry="19"/>
+          <ellipse class="pb" cx="16" cy="-11" rx="9" ry="19" transform="rotate(54 16 -11)"/>
+          <ellipse class="pa" cx="18" cy="7" rx="9" ry="19" transform="rotate(114 18 7)"/>
+          <ellipse class="pa" cx="0" cy="18" rx="9" ry="19"/>
+          <ellipse class="pa" cx="-18" cy="7" rx="9" ry="19" transform="rotate(-114 -18 7)"/>
+          <ellipse class="pb" cx="-16" cy="-11" rx="9" ry="19" transform="rotate(-54 -16 -11)"/>
+          <circle class="ct" r="8"/>
+          <circle fill="#e8d090" opacity=".5" r="4"/>
+        </g>
+      </g>
+
+      <!-- Цветок нижний 3 — центр -->
+      <g opacity=".3" transform="translate(720 884)">
+        <path class="s1" d="M0 18 Q2 4 0 -24"/>
+        <path class="la" d="M0 8 Q-26 -4 -36 -20 Q-16 -24 -2 -10 Q0 0 0 8Z"/>
+        <path class="lb" d="M0 8 Q26 -6 36 -22 Q16 -26 2 -12 Q0 -2 0 8Z"/>
+        <g transform="translate(0,-24)">
+          <ellipse class="pa" cx="0" cy="-20" rx="10" ry="22"/>
+          <ellipse class="pa" cx="18" cy="-13" rx="10" ry="22" transform="rotate(54 18 -13)"/>
+          <ellipse class="pb" cx="20" cy="8" rx="10" ry="22" transform="rotate(114 20 8)"/>
+          <ellipse class="pb" cx="0" cy="20" rx="10" ry="22"/>
+          <ellipse class="pb" cx="-20" cy="8" rx="10" ry="22" transform="rotate(-114 -20 8)"/>
+          <ellipse class="pa" cx="-18" cy="-13" rx="10" ry="22" transform="rotate(-54 -18 -13)"/>
+          <path class="s3" d="M0 0 Q0 -13 0 -20"/>
+          <path class="s3" d="M0 0 Q11 -7 18 -13"/>
+          <path class="s3" d="M0 0 Q12 5 20 8"/>
+          <path class="s3" d="M0 0 Q0 13 0 20"/>
+          <path class="s3" d="M0 0 Q-12 5 -20 8"/>
+          <path class="s3" d="M0 0 Q-11 -7 -18 -13"/>
+          <circle class="ct" r="9"/>
+          <circle fill="#e8d090" opacity=".55" r="4.5"/>
+          <circle stroke="#9a7838" stroke-width=".5" fill="none" r="9"/>
+        </g>
+      </g>
+
+      <!-- Цветок нижний 4 — правее центра -->
+      <g opacity=".27" transform="translate(1010 872)">
+        <path class="s2" d="M0 30 Q2 10 0 -18"/>
+        <path class="lb" d="M0 16 Q-22 4 -32 -12 Q-14 -16 -2 -2 Q0 6 0 16Z"/>
+        <path class="la" d="M0 16 Q22 2 32 -14 Q14 -18 2 -4 Q0 4 0 16Z"/>
+        <g transform="translate(0,-18)">
+          <ellipse class="pa" cx="0" cy="-17" rx="9" ry="18"/>
+          <ellipse class="pa" cx="16" cy="-10" rx="9" ry="18" transform="rotate(54 16 -10)"/>
+          <ellipse class="pb" cx="17" cy="6" rx="9" ry="18" transform="rotate(114 17 6)"/>
+          <ellipse class="pb" cx="0" cy="17" rx="9" ry="18"/>
+          <ellipse class="pb" cx="-17" cy="6" rx="9" ry="18" transform="rotate(-114 -17 6)"/>
+          <ellipse class="pa" cx="-16" cy="-10" rx="9" ry="18" transform="rotate(-54 -16 -10)"/>
+          <circle class="ct" r="8"/>
+          <circle fill="#e8d090" opacity=".5" r="4"/>
+        </g>
+      </g>
+
+      <!-- Цветок нижний 5 — крупный справа -->
+      <g opacity=".3" transform="translate(1252 860)">
+        <path class="s1" d="M0 38 Q6 10 0 -28"/>
+        <path class="la" d="M0 16 Q-34 -2 -48 -24 Q-24 -30 -6 -12 Q0 2 0 16Z"/>
+        <path class="lb" d="M0 16 Q34 -4 48 -26 Q24 -32 6 -14 Q0 0 0 16Z"/>
+        <g transform="translate(0,-28)">
+          <ellipse class="pb" cx="0" cy="-23" rx="11" ry="25"/>
+          <ellipse class="pb" cx="21" cy="-15" rx="11" ry="25" transform="rotate(54 21 -15)"/>
+          <ellipse class="pa" cx="23" cy="9" rx="11" ry="25" transform="rotate(114 23 9)"/>
+          <ellipse class="pa" cx="0" cy="23" rx="11" ry="25"/>
+          <ellipse class="pa" cx="-23" cy="9" rx="11" ry="25" transform="rotate(-114 -23 9)"/>
+          <ellipse class="pb" cx="-21" cy="-15" rx="11" ry="25" transform="rotate(-54 -21 -15)"/>
+          <path class="s3" d="M0 0 Q0 -15 0 -23"/>
+          <path class="s3" d="M0 0 Q13 -9 21 -15"/>
+          <path class="s3" d="M0 0 Q14 6 23 9"/>
+          <path class="s3" d="M0 0 Q0 15 0 23"/>
+          <path class="s3" d="M0 0 Q-14 6 -23 9"/>
+          <path class="s3" d="M0 0 Q-13 -9 -21 -15"/>
+          <circle class="ct" r="10"/>
+          <circle fill="#e8d090" opacity=".6" r="5.5"/>
+          <circle stroke="#9a7838" stroke-width=".6" fill="none" r="10"/>
+        </g>
+      </g>
+
+      <!-- Травы и бутоны нижней зоны — много -->
+      <g opacity=".27">
+        <!-- бутоны -->
+        <g transform="translate(310 895)">
+          <path class="s2" d="M0 6 Q-2 -14 0 -36"/>
+          <path class="pa" d="M0 -36 Q-9 -50 -7 -64 Q0 -68 7 -64 Q9 -50 0 -36Z"/>
+          <path class="pb" d="M0 -36 Q11 -48 13 -62 Q7 -66 0 -54 Q-2 -44 0 -36Z"/>
+          <path class="pb" d="M0 -36 Q-11 -48 -13 -62 Q-7 -66 0 -54 Q2 -44 0 -36Z"/>
+          <path class="la" d="M0 -16 Q-18 -24 -26 -38 Q-10 -42 -2 -28 Q0 -22 0 -16Z"/>
+          <path class="lb" d="M0 -16 Q18 -26 26 -40 Q10 -44 2 -30 Q0 -24 0 -16Z"/>
+        </g>
+        <g transform="translate(572 900)">
+          <path class="s2" d="M0 2 Q2 -16 0 -38"/>
+          <path class="pb" d="M0 -38 Q-8 -52 -6 -66 Q0 -70 6 -66 Q8 -52 0 -38Z"/>
+          <path class="pa" d="M0 -38 Q10 -50 12 -64 Q6 -68 0 -56 Q-2 -46 0 -38Z"/>
+          <path class="pa" d="M0 -38 Q-10 -50 -12 -64 Q-6 -68 0 -56 Q2 -46 0 -38Z"/>
+          <path class="lb" d="M0 -18 Q-16 -26 -24 -40 Q-8 -44 -2 -30 Q0 -24 0 -18Z"/>
+          <path class="la" d="M0 -18 Q16 -28 24 -42 Q8 -46 2 -32 Q0 -26 0 -18Z"/>
+        </g>
+        <g transform="translate(868 895)">
+          <path class="s2" d="M0 6 Q-2 -14 0 -36"/>
+          <path class="pa" d="M0 -36 Q-8 -50 -6 -62 Q0 -66 6 -62 Q8 -50 0 -36Z"/>
+          <path class="pb" d="M0 -36 Q10 -48 12 -60 Q6 -64 0 -52 Q-2 -42 0 -36Z"/>
+          <path class="pb" d="M0 -36 Q-10 -48 -12 -60 Q-6 -64 0 -52 Q2 -42 0 -36Z"/>
+          <path class="la" d="M0 -14 Q-16 -22 -24 -36 Q-8 -40 -2 -26 Q0 -20 0 -14Z"/>
+          <path class="lb" d="M0 -14 Q16 -24 24 -38 Q8 -42 2 -28 Q0 -22 0 -14Z"/>
+        </g>
+        <g transform="translate(1168 898)">
+          <path class="s2" d="M0 4 Q2 -16 0 -38"/>
+          <path class="pb" d="M0 -38 Q-9 -52 -7 -66 Q0 -70 7 -66 Q9 -52 0 -38Z"/>
+          <path class="pa" d="M0 -38 Q11 -50 13 -64 Q7 -68 0 -56 Q-2 -46 0 -38Z"/>
+          <path class="pa" d="M0 -38 Q-11 -50 -13 -64 Q-7 -68 0 -56 Q2 -46 0 -38Z"/>
+          <path class="lb" d="M0 -18 Q-18 -26 -26 -40 Q-10 -44 -2 -30 Q0 -24 0 -18Z"/>
+          <path class="la" d="M0 -18 Q18 -28 26 -42 Q10 -46 2 -32 Q0 -26 0 -18Z"/>
+        </g>
+
+        <!-- травы-стебли с листиками -->
+        <path class="s2" d="M376 900 Q370 870 366 840 Q360 808 368 778"/>
+        <path class="la" d="M366 840 Q344 822 336 800 Q354 796 364 814 Q366 828 366 840Z"/>
+        <path class="lb" d="M366 840 Q388 820 396 798 Q378 794 366 812 Q364 826 366 840Z"/>
+
+        <path class="s2" d="M648 900 Q654 872 658 842 Q664 810 656 780"/>
+        <path class="lb" d="M658 842 Q636 824 628 802 Q646 798 656 816 Q658 830 658 842Z"/>
+        <path class="la" d="M658 842 Q680 822 688 800 Q670 796 658 814 Q656 828 658 842Z"/>
+
+        <path class="s2" d="M792 900 Q786 872 782 842 Q776 810 784 780"/>
+        <path class="la" d="M782 842 Q760 824 752 802 Q770 798 780 816 Q782 830 782 842Z"/>
+        <path class="lb" d="M782 842 Q804 822 812 800 Q794 796 782 814 Q780 828 782 842Z"/>
+
+        <path class="s2" d="M1092 900 Q1098 872 1102 842 Q1108 810 1100 780"/>
+        <path class="lb" d="M1102 842 Q1080 824 1072 802 Q1090 798 1100 816 Q1102 830 1102 842Z"/>
+        <path class="la" d="M1102 842 Q1124 822 1132 800 Q1114 796 1102 814 Q1100 828 1102 842Z"/>
+
+        <!-- ягоды снизу -->
+        <circle class="dt" cx="366" cy="778" r="4"/><circle class="dt" cx="354" cy="768" r="3"/><circle class="dt" cx="376" cy="766" r="3.5"/>
+        <circle class="dt" cx="656" cy="780" r="3.5"/><circle class="dt" cx="668" cy="772" r="3"/><circle class="dt" cx="646" cy="770" r="2.5"/>
+        <circle class="dt" cx="784" cy="780" r="4"/><circle class="dt" cx="772" cy="770" r="3"/><circle class="dt" cx="794" cy="768" r="3.5"/>
+        <circle class="dt" cx="1100" cy="780" r="3.5"/><circle class="dt" cx="1112" cy="772" r="3"/><circle class="dt" cx="1090" cy="770" r="2.5"/>
+      </g>
+
+    </svg>
+
+    <!-- Анимированные частицы поверх -->
+    <canvas id="heroCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.3"></canvas>
+
+    <p class="hero-eyebrow">ИИ · Фотография · Визуальный контент</p>
+    <h1>Ваш образ, созданный <em>нейросетью</em></h1>
+    <p class="hero-sub">ИИ-фотосессии, карточки товаров и восстановление фотографий — профессиональный визуал без студии.</p>
+    <div class="hero-cta">
+      <a href="#services" class="btn btn-primary">Смотреть услуги</a>
+      <a href="#contact"  class="btn btn-ghost">Заказать</a>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="container about-grid">
+      <div class="about-visual reveal" style="max-width:360px">
+        <div class="about-frame">
+          <img src="images/me.png" alt="Константин Монтэге"
+            style="width:100%;height:100%;object-fit:cover;object-position:center top;">
+          <div class="about-tag">AI · Visual · Art</div>
+        </div>
+      </div>
+      <div class="reveal">
+        <p class="section-label">Обо мне</p>
+        <h2 class="section-title">Привет, я Константин — <em>ИИ художник</em></h2>
+        <div class="divider"></div>
+        <p class="about-text-p">Создаю визуальный контент нового поколения с помощью нейросетей: портреты, карточки для маркетплейсов и реставрация архивных фотографий.</p>
+        <p class="about-text-p">Не нужна студия и фотограф. Достаточно пары исходных файлов — и через 24 часа у вас готовый результат студийного качества.</p>
+        <div class="stats">
+          <div><div class="stat-num">300+</div><div class="stat-label">Клиентов</div></div>
+          <div><div class="stat-num">5</div><div class="stat-label">Направлений</div></div>
+          <div><div class="stat-num">24ч</div><div class="stat-label">Срок работы</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="container">
+      <div class="services-intro reveal">
+        <p class="section-label">Услуги</p>
+        <h2 class="section-title">Что я <em>предлагаю</em></h2>
+        <div class="divider"></div>
+        <p>Пять направлений — одна студия. Нажмите «Портфолио» под любой услугой, чтобы увидеть работы именно по ней.</p>
+      </div>
+      <div class="service-cards-row">
+        <div class="svc-card reveal">
+          <svg class="svc-icon" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="17" r="9" stroke="currentColor" stroke-width="1.3"/><path d="M7 40c0-8.284 6.716-15 15-15s15 6.716 15 15" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <h3>ИИ Фотосессии</h3>
+          <p>Реалистичные портреты и арт-образы без студии. Деловой, модный, фэнтези, кино — любой стиль.</p>
+          <div class="svc-price">от 1 500 ₽</div>
+          <div class="svc-btn-wrap"><a href="#port-photo" class="btn btn-ghost btn-sm">Портфолио →</a></div>
+        </div>
+        <div class="svc-card reveal">
+          <svg class="svc-icon" viewBox="0 0 44 44" fill="none"><rect x="5" y="5" width="15" height="19" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="24" y="5" width="15" height="19" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="5" y="28" width="15" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="24" y="28" width="15" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+          <h3>Карточки товаров</h3>
+          <p>Продающие карточки для WB, Ozon, Яндекс Маркета. Инфографика, lifestyle, предметная съёмка.</p>
+          <div class="svc-price">от 600 ₽</div>
+          <div class="svc-btn-wrap"><a href="#port-cards" class="btn btn-ghost btn-sm">Портфолио →</a></div>
+        </div>
+        <div class="svc-card reveal">
+          <svg class="svc-icon" viewBox="0 0 44 44" fill="none"><rect x="5" y="8" width="34" height="28" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M5 22h34" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2"/><path d="M14 14l4 4 6-6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="29" cy="14" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M9 30l7-5 5 4 5-6 9 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Восстановление фото</h3>
+          <p>Реставрация старых и повреждённых снимков. Колоризация, удаление царапин, повышение чёткости.</p>
+          <div class="svc-price">от 500 ₽</div>
+          <div class="svc-btn-wrap"><a href="#port-restore" class="btn btn-ghost btn-sm">Портфолио →</a></div>
+        </div>
+        <div class="svc-card reveal">
+          <svg class="svc-icon" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="22" r="14" stroke="currentColor" stroke-width="1.3"/><path d="M22 10v4M22 30v4M10 22h4M30 22h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="22" cy="22" r="5" stroke="currentColor" stroke-width="1.3"/></svg>
+          <h3>Логотипы</h3>
+          <p>Уникальный фирменный знак для бизнеса с помощью ИИ. Быстро, стильно, с вариантами на выбор.</p>
+          <div class="svc-price">от 1 000 ₽</div>
+          <div class="svc-btn-wrap"><a href="#logos-work" class="btn btn-ghost btn-sm">Портфолио →</a></div>
+        </div>
+        <div class="svc-card reveal">
+          <svg class="svc-icon" viewBox="0 0 44 44" fill="none"><rect x="4" y="10" width="36" height="24" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M4 17h36" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="22" width="10" height="7" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M25 24.5h10M25 28.5h7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <h3>Баннеры</h3>
+          <p>Рекламные баннеры для соцсетей, маркетплейсов и сайтов. Ярко, быстро, конверсионно.</p>
+          <div class="svc-price">от 800 ₽</div>
+          <div class="svc-btn-wrap"><a href="#port-banners" class="btn btn-ghost btn-sm">Портфолио →</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════ -->
+  <!-- ЛОГОТИПЫ ПЛАТФОРМ (из интернета, менять не надо) -->
+  <!-- ══════════════════════════════ -->
+  <section id="logos">
+    <div class="container">
+      <p class="section-label reveal" style="text-align:center">Работаю с</p>
+      <h2 class="section-title reveal" style="color:var(--mid);text-align:center;margin-bottom:3rem">Платформы и <em>маркетплейсы</em></h2>
+      <div class="logos-grid">
+
+        <div class="logo-item reveal">
+          <div class="logo-circle" style="background:#cb11ab;padding:14px">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Wildberries_2023_Pink.svg" alt="Wildberries"
+              style="width:100%;height:100%;object-fit:contain"
+              onerror="this.parentElement.style.background='#cb11ab';this.parentElement.innerHTML='<span style=color:#fff;font-weight:700;font-size:1rem>WB</span>'">
+          </div>
+          <span class="logo-name">Wildberries</span>
+        </div>
+
+        <div class="logo-item reveal">
+          <div class="logo-circle" style="background:#005bff;padding:14px">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Ozon_logo.svg/512px-Ozon_logo.svg.png" alt="Ozon"
+              style="width:100%;height:100%;object-fit:contain"
+              onerror="this.parentElement.innerHTML='<span style=color:#fff;font-weight:700;font-size:1rem>OZON</span>'">
+          </div>
+          <span class="logo-name">Ozon</span>
+        </div>
+
+        <div class="logo-item reveal">
+          <div class="logo-circle" style="background:#ffcc00;padding:14px">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Yandex_Market_logo_%282021%29.svg/512px-Yandex_Market_logo_%282021%29.svg.png" alt="Яндекс Маркет"
+              style="width:100%;height:100%;object-fit:contain"
+              onerror="this.parentElement.innerHTML='<span style=color:#333;font-weight:700;font-size:.8rem>Я.Маркет</span>'">
+          </div>
+          <span class="logo-name">Яндекс Маркет</span>
+        </div>
+
+        <div class="logo-item reveal">
+          <div class="logo-circle" style="background:radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);padding:0">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/512px-Instagram_icon.png" alt="Instagram"
+              style="width:100%;height:100%;object-fit:cover"
+              onerror="this.parentElement.innerHTML='<span style=color:#fff;font-weight:700;font-size:.8rem>IG</span>'">
+          </div>
+          <span class="logo-name">Instagram</span>
+        </div>
+
+        <div class="logo-item reveal">
+          <div class="logo-circle" style="background:#0077ff;padding:0">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/VK_Compact_Logo_%282021-present%29.svg/512px-VK_Compact_Logo_%282021-present%29.svg.png" alt="ВКонтакте"
+              style="width:100%;height:100%;object-fit:cover"
+              onerror="this.parentElement.innerHTML='<span style=color:#fff;font-weight:700;font-size:1rem>VK</span>'">
+          </div>
+          <span class="logo-name">ВКонтакте</span>
+        </div>
+
+        <div class="logo-item reveal">
+          <div class="logo-circle" style="background:#29a8eb;padding:0">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/512px-Telegram_logo.svg.png" alt="Telegram"
+              style="width:100%;height:100%;object-fit:cover"
+              onerror="this.parentElement.innerHTML='<span style=color:#fff;font-weight:700;font-size:.8rem>TG</span>'">
+          </div>
+          <span class="logo-name">Telegram</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- ЛОГОТИПЫ ДЛЯ КЛИЕНТОВ (твои работы)  -->
+  <!-- Замени images/mylogo-01.png … mylogo-06.png на свои работы -->
+  <!-- Формат: PNG с прозрачным фоном, квадрат 400×400px           -->
+  <!-- ══════════════════════════════════════ -->
+  <section id="logos-work" style="background:var(--white);padding:5rem 2rem">
+    <div class="container">
+      <p class="section-label reveal" style="text-align:center">Портфолио логотипов</p>
+      <h2 class="section-title reveal" style="color:var(--mid);text-align:center;margin-bottom:.5rem">Логотипы для <em>клиентов</em></h2>
+      <p class="reveal" style="text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:3rem">ИИ-брендинг — фирменный стиль и логотипы под ключ</p>
+      <div class="logos-grid" style="gap:3rem">
+
+        <div class="logo-item reveal">
+          <div class="logo-circle" style="width:240px;height:240px;border-color:var(--sand)">
+            <img src="images/mylogo-01.png" alt="Логотип клиента 1" onerror="this.parentElement.innerHTML='<div class=logo-fallback>mylogo-01.png</div>'">
+          </div>
+          <span class="logo-name">Клиент 1</span>
+        </div>
+
+        <div class="logo-item reveal">
+          <div class="logo-circle" style="width:240px;height:240px;border-color:var(--sand)">
+            <img src="images/mylogo-02.png" alt="Логотип клиента 2" onerror="this.parentElement.innerHTML='<div class=logo-fallback>mylogo-02.png</div>'">
+          </div>
+          <span class="logo-name">Клиент 2</span>
+        </div>
+
+        <div class="logo-item reveal">
+          <div class="logo-circle" style="width:240px;height:240px;border-color:var(--sand)">
+            <img src="images/mylogo-03.png" alt="Логотип клиента 3" onerror="this.parentElement.innerHTML='<div class=logo-fallback>mylogo-03.png</div>'">
+          </div>
+          <span class="logo-name">Клиент 3</span>
+        </div>
+
+        <div class="logo-item reveal">
+          <div class="logo-circle" style="width:240px;height:240px;border-color:var(--sand)">
+            <img src="images/mylogo-04.png" alt="Логотип клиента 4" onerror="this.parentElement.innerHTML='<div class=logo-fallback>mylogo-04.png</div>'">
+          </div>
+          <span class="logo-name">Клиент 4</span>
+        </div>
+
+        <div class="logo-item reveal">
+          <div class="logo-circle" style="width:240px;height:240px;border-color:var(--sand)">
+            <img src="images/mylogo-05.png" alt="Логотип клиента 5" onerror="this.parentElement.innerHTML='<div class=logo-fallback>mylogo-05.png</div>'">
+          </div>
+          <span class="logo-name">Клиент 5</span>
+        </div>
+
+        <div class="logo-item reveal">
+          <div class="logo-circle" style="width:240px;height:240px;border-color:var(--sand)">
+            <img src="images/mylogo-06.png" alt="Логотип клиента 6" onerror="this.parentElement.innerHTML='<div class=logo-fallback>mylogo-06.png</div>'">
+          </div>
+          <span class="logo-name">Клиент 6</span>
+        </div>
+
+      </div>
+      <div style="text-align:center;margin-top:3rem">
+        <a href="#contact" class="btn btn-primary">Заказать логотип →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════ -->
+  <!-- PORTFOLIO 1 · ИИ ФОТОСЕССИИ  -->
+  <!-- Замени images/photo-01.png … images/photo-08.png на свои файлы -->
+  <!-- ══════════════════════════════ -->
+  <section class="port-section port-section-1" id="port-photo">
+    <div class="container">
+      <div class="port-header reveal">
+        <div>
+          <p class="section-label">Портфолио ИИ-фотосессий</p>
+          <h2 class="section-title">ИИ <em>Фотосессии</em></h2>
+        </div>
+        <a href="#contact" class="btn btn-outline-light btn-sm">Заказать фотосессию →</a>
+      </div>
+      <div class="port-grid reveal">
+
+        <div class="port-item">
+          <div class="port-fallback g1"></div>
+          <img class="port-img" src="images/photo-01.png" alt="Деловой портрет" onerror="this.style.display='none'">
+          <div class="port-thumb">photo-01.png</div>
+          <div class="port-overlay"><div class="port-title-label">Деловой портрет</div><div class="port-cat-label">LinkedIn · Резюме</div></div>
+        </div>
+
+        <div class="port-item">
+          <div class="port-fallback g2"></div>
+          <img class="port-img" src="images/photo-02.png" alt="Фэнтези-образ" onerror="this.style.display='none'">
+          <div class="port-thumb">photo-02.png</div>
+          <div class="port-overlay"><div class="port-title-label">Фэнтези-образ</div><div class="port-cat-label">Арт · Фэнтези</div></div>
+        </div>
+
+        <div class="port-item">
+          <div class="port-fallback g3"></div>
+          <img class="port-img" src="images/photo-03.png" alt="Природный образ" onerror="this.style.display='none'">
+          <div class="port-thumb">photo-03.png</div>
+          <div class="port-overlay"><div class="port-title-label">Природный образ</div><div class="port-cat-label">Арт · Природа</div></div>
+        </div>
+
+        <div class="port-item">
+          <div class="port-fallback g4"></div>
+          <img class="port-img" src="images/photo-04.png" alt="Золотой час" onerror="this.style.display='none'">
+          <div class="port-thumb">photo-04.png</div>
+          <div class="port-overlay"><div class="port-title-label">Lifestyle-портрет</div><div class="port-cat-label">Портрет · Свет</div></div>
+        </div>
+
+        <div class="port-item">
+          <div class="port-fallback g5"></div>
+          <img class="port-img" src="images/photo-05.png" alt="Модная съёмка" onerror="this.style.display='none'">
+          <div class="port-thumb">photo-05.png</div>
+          <div class="port-overlay"><div class="port-title-label">Модная съёмка</div><div class="port-cat-label">Мода · Глянец</div></div>
+        </div>
+
+        <div class="port-item">
+          <div class="port-fallback g6"></div>
+          <img class="port-img" src="images/photo-06.png" alt="Ренессанс" onerror="this.style.display='none'">
+          <div class="port-thumb">photo-06.png</div>
+          <div class="port-overlay"><div class="port-title-label">Ренессанс-образ</div><div class="port-cat-label">Арт · История</div></div>
+        </div>
+
+        <div class="port-item">
+          <div class="port-fallback g7"></div>
+          <img class="port-img" src="images/photo-07.png" alt="Кинематограф" onerror="this.style.display='none'">
+          <div class="port-thumb">photo-07.png</div>
+          <div class="port-overlay"><div class="port-title-label">Кинематограф</div><div class="port-cat-label">Кино · Арт</div></div>
+        </div>
+
+        <div class="port-item">
+          <div class="port-fallback g8"></div>
+          <img class="port-img" src="images/photo-08.png" alt="Минимализм" onerror="this.style.display='none'">
+          <div class="port-thumb">photo-08.png</div>
+          <div class="port-overlay"><div class="port-title-label">Минимал-портрет</div><div class="port-cat-label">Чистота · Форма</div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- PORTFOLIO 2 · КАРТОЧКИ ТОВАРОВ        -->
+  <!-- ══════════════════════════════════════ -->
+  <!-- PORTFOLIO · БАННЕРЫ                   -->
+  <!-- Замени images/banner-01.png … banner-03.png на свои файлы -->
+  <!-- Формат: PNG, горизонтальный, рекомендуется 1920×600px      -->
+  <!-- ══════════════════════════════════════ -->
+  <section class="port-section" style="background:#0f1320" id="port-banners">
+    <div class="container">
+      <div class="port-header reveal">
+        <div>
+          <p class="section-label">Портфолио баннеров</p>
+          <h2 class="section-title">Рекламные <em>баннеры</em></h2>
+        </div>
+        <a href="#contact" class="btn btn-outline-light btn-sm">Заказать баннер →</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.8rem">
+
+        <div class="port-item reveal">
+          <div class="port-fallback g9"></div>
+          <img class="port-img" src="images/banner-01.png" alt="Баннер 1" onerror="this.style.display='none'">
+          <div class="port-thumb banner16"></div>
+          <div class="port-overlay"><div class="port-title-label">Баннер для сайта</div><div class="port-cat-label">Широкоформатный · 1920×600</div></div>
+        </div>
+
+        <div class="port-item reveal">
+          <div class="port-fallback g10"></div>
+          <img class="port-img" src="images/banner-02.png" alt="Баннер 2" onerror="this.style.display='none'">
+          <div class="port-thumb banner16"></div>
+          <div class="port-overlay"><div class="port-title-label">Промо-баннер</div><div class="port-cat-label">Маркетплейс · Акция</div></div>
+        </div>
+
+        <div class="port-item reveal">
+          <div class="port-fallback g5"></div>
+          <img class="port-img" src="images/banner-03.png" alt="Баннер 3" onerror="this.style.display='none'">
+          <div class="port-thumb banner16"></div>
+          <div class="port-overlay"><div class="port-title-label">Баннер для соцсетей</div><div class="port-cat-label">VK · Instagram · Telegram</div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Замени images/card-01.png … card-08.png на свои файлы -->
+  <!-- ══════════════════════════════════════ -->
+  <section class="port-section port-section-2" id="port-cards">
+    <div class="container">
+      <div class="port-header reveal">
+        <div>
+          <p class="section-label">Портфолио карточек товаров</p>
+          <h2 class="section-title">Карточки <em>товаров</em></h2>
+        </div>
+        <a href="#contact" class="btn btn-outline-light btn-sm">Заказать карточки →</a>
+      </div>
+      <div class="port-grid reveal">
+
+        <div class="port-item">
+          <div class="port-fallback g1"></div>
+          <img class="port-img" src="images/card-01.png" alt="Косметика" onerror="this.style.display='none'">
+          <div class="port-thumb card34">card-01.png</div>
+          <div class="port-overlay"><div class="port-title-label">Уходовая косметика</div><div class="port-cat-label">WB · Предметная</div></div>
+        </div>
+
+        <div class="port-item">
+          <div class="port-fallback g5"></div>
+          <img class="port-img" src="images/card-02.png" alt="Одежда" onerror="this.style.display='none'">
+          <div class="port-thumb card34">card-02.png</div>
+          <div class="port-overlay"><div class="port-title-label">Женская одежда</div><div class="port-cat-label">Ozon · Lifestyle</div></div>
+        </div>
+
+        <div class="port-item">
+          <div class="port-fallback g9"></div>
+          <img class="port-img" src="images/card-03.png" alt="Электроника" onerror="this.style.display='none'">
+          <div class="port-thumb card34">card-03.png</div>
+          <div class="port-overlay"><div class="port-title-label">Гаджеты и техника</div><div class="port-cat-label">Я.Маркет · Инфографика</div></div>
+        </div>
+
+        <div class="port-item">
+          <div class="port-fallback g10"></div>
+          <img class="port-img" src="images/card-04.png" alt="Детские товары" onerror="this.style.display='none'">
+          <div class="port-thumb card34">card-04.png</div>
+          <div class="port-overlay"><div class="port-title-label">Детские игрушки</div><div class="port-cat-label">WB · Lifestyle</div></div>
+        </div>
+
+        <div class="port-item">
+          <div class="port-fallback g11"></div>
+          <img class="port-img" src="images/card-05.png" alt="Спорт" onerror="this.style.display='none'">
+          <div class="port-thumb card34">card-05.png</div>
+          <div class="port-overlay"><div class="port-title-label">Спорт и фитнес</div><div class="port-cat-label">Ozon · Предметная</div></div>
+        </div>
+
+        <div class="port-item">
+          <div class="port-fallback g6"></div>
+          <img class="port-img" src="images/card-06.png" alt="Украшения" onerror="this.style.display='none'">
+          <div class="port-thumb card34">card-06.png</div>
+          <div class="port-overlay"><div class="port-title-label">Ювелирные украшения</div><div class="port-cat-label">WB · Глянец</div></div>
+        </div>
+
+        <div class="port-item">
+          <div class="port-fallback g3"></div>
+          <img class="port-img" src="images/card-07.png" alt="Еда" onerror="this.style.display='none'">
+          <div class="port-thumb card34">card-07.png</div>
+          <div class="port-overlay"><div class="port-title-label">Food-съёмка</div><div class="port-cat-label">Я.Маркет · Аппетитно</div></div>
+        </div>
+
+        <div class="port-item">
+          <div class="port-fallback g8"></div>
+          <img class="port-img" src="images/card-08.png" alt="Декор" onerror="this.style.display='none'">
+          <div class="port-thumb card34">card-08.png</div>
+          <div class="port-overlay"><div class="port-title-label">Интерьерный декор</div><div class="port-cat-label">Ozon · Lifestyle</div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- PORTFOLIO 3 · ВОССТАНОВЛЕНИЕ ФОТО     -->
+  <!-- Замени images/before-01.png / after-01.png и т.д. на свои -->
+  <!-- ══════════════════════════════════════ -->
+  <section class="port-section port-section-3" id="port-restore">
+    <div class="container">
+      <div class="port-header reveal">
+        <div>
+          <p class="section-label">Портфолио реставрации фотографий</p>
+          <h2 class="section-title">Восстановление <em>фотографий</em></h2>
+        </div>
+        <a href="#contact" class="btn btn-outline-light btn-sm">Заказать реставрацию →</a>
+      </div>
+      <div class="restore-pairs">
+
+        <div class="restore-pair reveal">
+          <div class="port-item">
+            <div class="port-fallback g-bw"></div>
+            <img class="port-img" src="images/before-01.png" alt="До реставрации" onerror="this.style.display='none'">
+            <div class="port-thumb">before-01.png</div>
+            <div class="restore-label">До</div>
+            <div class="port-overlay"><div class="port-title-label">Повреждённый снимок</div><div class="port-cat-label">Царапины · Выцветание</div></div>
+          </div>
+          <div class="port-item">
+            <div class="port-fallback g4"></div>
+            <img class="port-img" src="images/after-01.png" alt="После реставрации" onerror="this.style.display='none'">
+            <div class="port-thumb">after-01.png</div>
+            <div class="restore-label after">После</div>
+            <div class="port-overlay"><div class="port-title-label">Семейный портрет</div><div class="port-cat-label">Реставрация · Колоризация</div></div>
+          </div>
+        </div>
+
+        <div class="restore-pair reveal">
+          <div class="port-item">
+            <div class="port-fallback g-bw2"></div>
+            <img class="port-img" src="images/before-02.png" alt="До" onerror="this.style.display='none'">
+            <div class="port-thumb">before-02.png</div>
+            <div class="restore-label">До</div>
+            <div class="port-overlay"><div class="port-title-label">Чёрно-белый снимок</div><div class="port-cat-label">Потери деталей</div></div>
+          </div>
+          <div class="port-item">
+            <div class="port-fallback g12"></div>
+            <img class="port-img" src="images/after-02.png" alt="После" onerror="this.style.display='none'">
+            <div class="port-thumb">after-02.png</div>
+            <div class="restore-label after">После</div>
+            <div class="port-overlay"><div class="port-title-label">Колоризация и детали</div><div class="port-cat-label">Цвет · Чёткость</div></div>
+          </div>
+        </div>
+
+        <div class="restore-pair reveal">
+          <div class="port-item">
+            <div class="port-fallback g-bw3"></div>
+            <img class="port-img" src="images/before-03.png" alt="До" onerror="this.style.display='none'">
+            <div class="port-thumb">before-03.png</div>
+            <div class="restore-label">До</div>
+            <div class="port-overlay"><div class="port-title-label">Размытость и шум</div><div class="port-cat-label">Низкое разрешение</div></div>
+          </div>
+          <div class="port-item">
+            <div class="port-fallback g7"></div>
+            <img class="port-img" src="images/after-03.png" alt="После" onerror="this.style.display='none'">
+            <div class="port-thumb">after-03.png</div>
+            <div class="restore-label after">После</div>
+            <div class="port-overlay"><div class="port-title-label">Апскейл до 4K</div><div class="port-cat-label">Шумоподавление · Детализация</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="container contact-wrap">
+      <div class="reveal">
+        <p class="section-label">Контакты</p>
+        <h2 class="section-title">Давайте <em>поговорим</em></h2>
+        <div class="divider"></div>
+        <p class="contact-info-p">Расскажите о проекте — я отвечу в течение нескольких часов и предложу лучший вариант для вашей задачи.</p>
+        <div class="contact-detail">
+          <div class="contact-detail-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <a href="mailto:cosmontague@gmail.com">cosmontague@gmail.com</a>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+          </div>
+          <a href="https://t.me/cosmontague" target="_blank">@cosmontague</a>
+        </div>
+      </div>
+      <div class="reveal">
+        <form class="contact-form" id="contactForm" action="https://formspree.io/f/mvzleaqa" method="POST">
+          <div class="form-group">
+            <label>Ваше имя</label>
+            <input type="text" name="name" placeholder="Как вас зовут?" required />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="your@email.com" required />
+          </div>
+          <div class="form-group">
+            <label>Телефон</label>
+            <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" />
+          </div>
+          <div class="form-group">
+            <label>Услуга</label>
+            <select name="service">
+              <option value="">Выберите услугу…</option>
+              <option>ИИ Фотосессия</option>
+              <option>Карточки товаров для маркетплейсов</option>
+              <option>Восстановление фотографий</option>
+              <option>Другое</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Сообщение</label>
+            <textarea name="message" placeholder="Расскажите подробнее о проекте…"></textarea>
+          </div>
+          <!-- скрытое поле — куда дублировать -->
+          <input type="hidden" name="_subject" value="Новая заявка с сайта — Константин Монтэге ИИ сервисы" />
+          <input type="hidden" name="_next" value="" />
+          <button type="submit" class="btn btn-primary" style="align-self:flex-start">Отправить заявку</button>
+        </form>
+        <div class="form-success" id="formSuccess"><p>Спасибо! Я свяжусь с вами в ближайшее время ✦</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 <span>Константин Монтэге · ИИ сервисы</span> — Все права защищены</p>
+  </footer>
+
+  <script>
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => navbar.classList.toggle('shrunk', window.scrollY > 60));
+
+    const burger = document.getElementById('burger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    burger.addEventListener('click', () => {
+      burger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+      document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+    });
+    function closeMenu() {
+      burger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const siblings = Array.from(e.target.parentElement.querySelectorAll('.reveal'));
+          setTimeout(() => e.target.classList.add('visible'), siblings.indexOf(e.target) * 70);
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Formspree AJAX отправка
+    const form = document.getElementById('contactForm');
+    const formSuccess = document.getElementById('formSuccess');
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      btn.textContent = 'Отправляю…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (res.ok) {
+          form.style.display = 'none';
+          formSuccess.style.display = 'block';
+        } else {
+          btn.textContent = 'Ошибка — попробуйте ещё раз';
+          btn.disabled = false;
+        }
+      } catch {
+        btn.textContent = 'Ошибка сети — попробуйте ещё раз';
+        btn.disabled = false;
+      }
+    });
+
+    // ── Hero Canvas Animation ──
+    const canvas = document.getElementById('heroCanvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles, mouse = { x: null, y: null };
+
+    function resize() {
+      W = canvas.width  = canvas.offsetWidth;
+      H = canvas.height = canvas.offsetHeight;
+    }
+
+    class Particle {
+      constructor() { this.reset(true); }
+      reset(init) {
+        this.x     = Math.random() * W;
+        this.y     = init ? Math.random() * H : H + 10;
+        this.r     = Math.random() * 1.8 + .4;
+        this.vx    = (Math.random() - .5) * .4;
+        this.vy    = -(Math.random() * .6 + .2);
+        this.alpha = Math.random() * .6 + .2;
+        this.color = Math.random() > .5 ? '196,154,108' : '140,106,74';
+      }
+      update() {
+        if (mouse.x !== null) {
+          const dx = this.x - mouse.x, dy = this.y - mouse.y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < 120) { this.vx += dx/dist*.06; this.vy += dy/dist*.06; }
+        }
+        this.x += this.vx; this.y += this.vy;
+        this.vx *= .99; this.vy *= .99;
+        if (this.y < -10 || this.x < -10 || this.x > W+10) this.reset(false);
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(${this.color},${this.alpha})`;
+        ctx.fill();
+      }
+    }
+
+    function drawLines() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i+1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < 90) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(196,154,108,${(1-dist/90)*.18})`;
+            ctx.lineWidth = .6;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function initParticles() {
+      resize();
+      const count = Math.min(Math.floor((W * H) / 7000), 120);
+      particles = Array.from({ length: count }, () => new Particle());
+    }
+
+    function loop() {
+      ctx.clearRect(0, 0, W, H);
+      drawLines();
+      particles.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('resize', initParticles);
+    document.getElementById('hero').addEventListener('mousemove', e => {
+      const r = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - r.left;
+      mouse.y = e.clientY - r.top;
+    });
+    document.getElementById('hero').addEventListener('mouseleave', () => {
+      mouse.x = null; mouse.y = null;
+    });
+
+    initParticles();
+    loop();
+  </script>
+</body>
+</html>
