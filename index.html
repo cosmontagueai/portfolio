@@ -284,6 +284,23 @@
     @media (max-width: 1024px) { .service-cards-row { grid-template-columns: 1fr 1fr; } .port-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 900px) { nav { padding: 1.2rem 2rem; } nav.shrunk { padding: .8rem 2rem; } .nav-links { display: none; } .burger { display: flex; } .about-grid { grid-template-columns: 1fr; gap: 3rem; } .about-visual { max-width: 300px; } .contact-wrap { grid-template-columns: 1fr; gap: 3rem; } .port-header { flex-direction: column; align-items: flex-start; } }
     @media (max-width: 600px) { section, .port-section { padding: 4rem 1.2rem; } .service-cards-row { grid-template-columns: 1fr; } .port-grid { grid-template-columns: 1fr 1fr; gap: .5rem; } .restore-pair { grid-template-columns: 1fr; } .stats { gap: 1.5rem; } }
+
+    /* ── LIGHTBOX ── */
+    .lightbox { display:none; position:fixed; inset:0; z-index:1000; background:rgba(15,10,6,.96); backdrop-filter:blur(8px); align-items:center; justify-content:center; flex-direction:column; }
+    .lightbox.active { display:flex; }
+    .lb-img { max-width:88vw; max-height:80vh; object-fit:contain; border-radius:2px; box-shadow:0 30px 80px rgba(0,0,0,.6); transition:opacity .22s; }
+    .lb-img.fading { opacity:0; }
+    .lb-close { position:fixed; top:1.4rem; right:1.8rem; background:none; border:none; cursor:pointer; color:rgba(255,255,255,.7); font-size:2rem; line-height:1; transition:color .2s; z-index:10; }
+    .lb-close:hover { color:var(--accent); }
+    .lb-arrow { position:fixed; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:rgba(255,255,255,.8); font-size:1.5rem; transition:background .2s,color .2s; z-index:10; }
+    .lb-arrow:hover { background:var(--brown); color:#fff; }
+    .lb-prev { left:1.2rem; }
+    .lb-next { right:1.2rem; }
+    .lb-info { margin-top:1.2rem; text-align:center; }
+    .lb-counter { font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.35); }
+    .lb-title { font-family:var(--font-display); font-size:1.1rem; font-style:italic; color:rgba(255,255,255,.6); margin-top:.3rem; }
+    .lb-fallback { width:60vw; height:60vh; max-width:600px; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-style:italic; color:rgba(255,255,255,.2); font-size:1.1rem; border:1px solid rgba(255,255,255,.08); border-radius:2px; }
+    @media(max-width:600px){ .lb-arrow{width:38px;height:38px;font-size:1.1rem;} .lb-prev{left:.3rem;} .lb-next{right:.3rem;} }
   </style>
 </head>
 <body>
@@ -318,506 +335,14 @@
 
   <section class="hero" id="hero">
     <div class="hero-bg"></div>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
 
-    <!-- БОТАНИЧЕСКИЙ ФОН — плотный иллюстративный стиль -->
-    <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1440 900">
-      <defs>
-        <style>
-          .s{stroke:#5c3e20;fill:none}
-          .s1{stroke:#5c3e20;fill:none;stroke-width:1.6}
-          .s2{stroke:#6b4a28;fill:none;stroke-width:1}
-          .s3{stroke:#7a5830;fill:none;stroke-width:.7}
-          .la{fill:#7a5c2e}
-          .lb{fill:#9a7838}
-          .lc{fill:#6a4e28}
-          .pa{fill:#8c6a30}
-          .pb{fill:#7a5828}
-          .pc{fill:#a07838}
-          .ct{fill:#c49a5a}
-          .dt{fill:#9a7832}
-        </style>
-      </defs>
+    <!-- Apple-style animated vortex -->
+    <canvas id="heroCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0"></canvas>
 
-      <!-- ══════════════════════════════════════════════ -->
-      <!--  Л Е В А Я   П О Л О В И Н А                -->
-      <!-- ══════════════════════════════════════════════ -->
-
-      <!-- Главный левый стебель -->
-      <g opacity=".28">
-        <path class="s1" d="M55 910 Q40 820 52 730 Q66 630 44 530 Q24 440 50 340 Q70 260 54 160 Q42 90 62 10"/>
-
-        <!-- Листья вдоль главного стебля — крупные парные -->
-        <!-- пара 1 — низ -->
-        <path class="la" d="M52 730 Q-4 696 -24 654 Q12 646 42 672 Q52 700 52 730Z"/>
-        <path class="la" d="M52 730 Q106 694 128 652 Q92 644 62 670 Q52 698 52 730Z"/>
-        <path class="s3" d="M52 730 Q24 706 -10 662"/>
-        <path class="s3" d="M52 730 Q80 704 112 660"/>
-        <!-- пара 2 -->
-        <path class="lb" d="M46 630 Q-8 598 -28 558 Q8 550 38 574 Q48 600 46 630Z"/>
-        <path class="lb" d="M46 630 Q100 596 122 556 Q86 548 56 572 Q46 598 46 630Z"/>
-        <path class="s3" d="M46 630 Q18 608 -14 566"/>
-        <path class="s3" d="M46 630 Q74 606 108 564"/>
-        <!-- пара 3 -->
-        <path class="la" d="M48 528 Q-6 498 -26 460 Q10 452 40 474 Q50 500 48 528Z"/>
-        <path class="la" d="M48 528 Q102 496 124 458 Q88 450 58 472 Q48 498 48 528Z"/>
-        <!-- пара 4 -->
-        <path class="lc" d="M50 428 Q-2 400 -20 364 Q14 357 44 378 Q52 402 50 428Z"/>
-        <path class="lc" d="M50 428 Q102 398 122 362 Q88 355 58 376 Q50 400 50 428Z"/>
-        <!-- пара 5 -->
-        <path class="lb" d="M52 330 Q2 302 -16 268 Q18 261 46 282 Q54 306 52 330Z"/>
-        <path class="lb" d="M52 330 Q102 300 122 266 Q88 259 58 280 Q50 304 52 330Z"/>
-        <!-- пара 6 — верх -->
-        <path class="la" d="M54 228 Q6 202 -12 168 Q22 161 48 182 Q56 206 54 228Z"/>
-        <path class="la" d="M54 228 Q102 200 122 166 Q88 159 58 180 Q52 204 54 228Z"/>
-        <path class="lc" d="M58 128 Q12 104 -6 72 Q26 66 50 86 Q60 108 58 128Z"/>
-        <path class="lc" d="M58 128 Q104 102 124 70 Q90 64 60 84 Q56 106 58 128Z"/>
-      </g>
-
-      <!-- Боковые ветви левой стороны -->
-      <g opacity=".26">
-        <!-- ветвь 1 — от низа -->
-        <path class="s2" d="M48 680 Q14 648 -10 618"/>
-        <path class="la" d="M14 648 Q-14 628 -22 604 Q-2 600 10 618 Q14 634 14 648Z"/>
-        <path class="lb" d="M14 648 Q42 626 50 602 Q30 598 14 616 Q10 632 14 648Z"/>
-        <path class="s3" d="M14 648 Q-8 632 -16 610"/>
-        <path class="s3" d="M14 648 Q36 630 44 608"/>
-
-        <!-- ветвь 2 -->
-        <path class="s2" d="M44 578 Q8 548 -16 518"/>
-        <path class="lb" d="M8 548 Q-20 528 -28 506 Q-8 502 4 520 Q8 534 8 548Z"/>
-        <path class="la" d="M8 548 Q36 526 44 504 Q24 500 8 518 Q4 532 8 548Z"/>
-        <path class="s3" d="M8 548 Q-14 532 -22 510"/>
-
-        <!-- ветвь 3 -->
-        <path class="s2" d="M46 478 Q10 450 -14 422"/>
-        <path class="la" d="M10 450 Q-16 430 -24 408 Q-4 404 8 422 Q12 436 10 450Z"/>
-        <path class="lb" d="M10 450 Q38 428 46 406 Q26 402 10 420 Q6 434 10 450Z"/>
-
-        <!-- ветвь 4 -->
-        <path class="s2" d="M48 378 Q12 350 -12 322"/>
-        <path class="lc" d="M12 350 Q-14 330 -22 308 Q-2 304 10 322 Q14 336 12 350Z"/>
-        <path class="la" d="M12 350 Q40 328 48 306 Q28 302 12 320 Q8 334 12 350Z"/>
-
-        <!-- ветвь 5 -->
-        <path class="s2" d="M50 278 Q14 252 -10 226"/>
-        <path class="lb" d="M14 252 Q-12 232 -20 210 Q0 206 12 224 Q16 238 14 252Z"/>
-        <path class="lc" d="M14 252 Q42 230 50 208 Q30 204 14 222 Q10 236 14 252Z"/>
-
-        <!-- ветвь 6 — малые тонкие -->
-        <path class="s3" d="M52 178 Q18 156 0 132"/>
-        <path class="lb" d="M18 156 Q-4 138 -10 116 Q8 114 14 132 Q18 144 18 156Z"/>
-        <path class="la" d="M18 156 Q42 136 50 114 Q30 112 18 130 Q14 142 18 156Z"/>
-
-        <path class="s3" d="M56 98 Q24 78 8 56"/>
-        <path class="lc" d="M24 78 Q4 60 -2 40 Q14 38 20 56 Q24 68 24 78Z"/>
-        <path class="lb" d="M24 78 Q46 58 54 38 Q34 36 22 54 Q18 66 24 78Z"/>
-      </g>
-
-      <!-- Ягоды и точки левая сторона -->
-      <g opacity=".3">
-        <circle class="dt" cx="32" cy="588" r="4.5"/>
-        <circle class="dt" cx="18" cy="578" r="3.5"/>
-        <circle class="dt" cx="26" cy="566" r="4"/>
-        <circle class="dt" cx="40" cy="572" r="3"/>
-        <circle class="dt" cx="14" cy="560" r="2.5"/>
-
-        <circle class="dt" cx="28" cy="398" r="4"/>
-        <circle class="dt" cx="14" cy="388" r="3"/>
-        <circle class="dt" cx="22" cy="376" r="3.5"/>
-        <circle class="dt" cx="36" cy="382" r="2.5"/>
-
-        <circle class="dt" cx="30" cy="198" r="3.5"/>
-        <circle class="dt" cx="16" cy="188" r="3"/>
-        <circle class="dt" cx="24" cy="176" r="4"/>
-        <circle class="dt" cx="38" cy="182" r="2.5"/>
-        <circle class="dt" cx="12" cy="174" r="2"/>
-
-        <circle class="dt" cx="26" cy="80" r="3"/>
-        <circle class="dt" cx="12" cy="72" r="2.5"/>
-        <circle class="dt" cx="20" cy="62" r="3.5"/>
-      </g>
-
-      <!-- Дополнительные тонкие веточки слева — заполнение -->
-      <g opacity=".2">
-        <path class="s3" d="M30 750 Q-10 730 -24 706"/>
-        <path class="la" d="M-10 730 Q-30 714 -34 694 Q-16 692 -8 708 Q-8 720 -10 730Z"/>
-        <path class="s3" d="M36 460 Q-8 440 -22 418"/>
-        <path class="lb" d="M-8 440 Q-28 424 -32 404 Q-14 402 -6 418 Q-6 430 -8 440Z"/>
-        <path class="s3" d="M42 260 Q2 242 -12 220"/>
-        <path class="lc" d="M2 242 Q-18 226 -22 206 Q-4 204 2 220 Q4 232 2 242Z"/>
-      </g>
-
-      <!-- ══════════════════════════════════════════════ -->
-      <!--  П Р А В А Я   П О Л О В И Н А               -->
-      <!-- ══════════════════════════════════════════════ -->
-
-      <g opacity=".28">
-        <path class="s1" d="M1385 910 Q1400 820 1388 730 Q1374 630 1396 530 Q1416 440 1390 340 Q1370 260 1386 160 Q1398 90 1378 10"/>
-
-        <path class="la" d="M1388 730 Q1444 696 1464 654 Q1428 646 1398 672 Q1388 700 1388 730Z"/>
-        <path class="la" d="M1388 730 Q1334 694 1312 652 Q1348 644 1378 670 Q1388 698 1388 730Z"/>
-        <path class="s3" d="M1388 730 Q1416 706 1450 662"/>
-        <path class="s3" d="M1388 730 Q1360 704 1328 660"/>
-
-        <path class="lb" d="M1394 630 Q1448 598 1468 558 Q1432 550 1402 574 Q1392 600 1394 630Z"/>
-        <path class="lb" d="M1394 630 Q1340 596 1318 556 Q1354 548 1384 572 Q1394 598 1394 630Z"/>
-        <path class="s3" d="M1394 630 Q1422 608 1454 566"/>
-        <path class="s3" d="M1394 630 Q1366 606 1332 564"/>
-
-        <path class="la" d="M1392 528 Q1446 498 1466 460 Q1430 452 1400 474 Q1390 500 1392 528Z"/>
-        <path class="la" d="M1392 528 Q1338 496 1316 458 Q1352 450 1382 472 Q1392 498 1392 528Z"/>
-
-        <path class="lc" d="M1390 428 Q1442 400 1460 364 Q1426 357 1396 378 Q1388 402 1390 428Z"/>
-        <path class="lc" d="M1390 428 Q1338 398 1318 362 Q1352 355 1382 376 Q1390 400 1390 428Z"/>
-
-        <path class="lb" d="M1388 330 Q1438 302 1456 268 Q1422 261 1394 282 Q1386 306 1388 330Z"/>
-        <path class="lb" d="M1388 330 Q1338 300 1318 266 Q1352 259 1382 280 Q1390 304 1388 330Z"/>
-
-        <path class="la" d="M1386 228 Q1434 202 1452 168 Q1418 161 1392 182 Q1384 206 1386 228Z"/>
-        <path class="la" d="M1386 228 Q1338 200 1318 166 Q1352 159 1382 180 Q1388 204 1386 228Z"/>
-
-        <path class="lc" d="M1382 128 Q1428 104 1446 72 Q1414 66 1390 86 Q1380 108 1382 128Z"/>
-        <path class="lc" d="M1382 128 Q1336 102 1316 70 Q1350 64 1380 84 Q1384 106 1382 128Z"/>
-      </g>
-
-      <g opacity=".26">
-        <path class="s2" d="M1392 680 Q1426 648 1450 618"/>
-        <path class="la" d="M1426 648 Q1454 628 1462 604 Q1442 600 1430 618 Q1426 634 1426 648Z"/>
-        <path class="lb" d="M1426 648 Q1398 626 1390 602 Q1410 598 1426 616 Q1430 632 1426 648Z"/>
-        <path class="s3" d="M1426 648 Q1448 632 1456 610"/>
-        <path class="s3" d="M1426 648 Q1404 630 1396 608"/>
-
-        <path class="s2" d="M1396 578 Q1432 548 1456 518"/>
-        <path class="lb" d="M1432 548 Q1460 528 1468 506 Q1448 502 1436 520 Q1432 534 1432 548Z"/>
-        <path class="la" d="M1432 548 Q1404 526 1396 504 Q1416 500 1432 518 Q1436 532 1432 548Z"/>
-
-        <path class="s2" d="M1394 478 Q1430 450 1454 422"/>
-        <path class="la" d="M1430 450 Q1456 430 1464 408 Q1444 404 1432 422 Q1428 436 1430 450Z"/>
-        <path class="lb" d="M1430 450 Q1402 428 1394 406 Q1414 402 1430 420 Q1434 434 1430 450Z"/>
-
-        <path class="s2" d="M1392 378 Q1428 350 1452 322"/>
-        <path class="lc" d="M1428 350 Q1454 330 1462 308 Q1442 304 1430 322 Q1426 336 1428 350Z"/>
-        <path class="la" d="M1428 350 Q1400 328 1392 306 Q1412 302 1428 320 Q1432 334 1428 350Z"/>
-
-        <path class="s2" d="M1390 278 Q1426 252 1450 226"/>
-        <path class="lb" d="M1426 252 Q1452 232 1460 210 Q1440 206 1428 224 Q1424 238 1426 252Z"/>
-        <path class="lc" d="M1426 252 Q1398 230 1390 208 Q1410 204 1426 222 Q1430 236 1426 252Z"/>
-
-        <path class="s3" d="M1388 178 Q1422 156 1440 132"/>
-        <path class="lb" d="M1422 156 Q1444 138 1450 116 Q1432 114 1426 132 Q1422 144 1422 156Z"/>
-        <path class="la" d="M1422 156 Q1398 136 1390 114 Q1410 112 1422 130 Q1426 142 1422 156Z"/>
-
-        <path class="s3" d="M1384 98 Q1416 78 1432 56"/>
-        <path class="lc" d="M1416 78 Q1436 60 1442 40 Q1426 38 1420 56 Q1416 68 1416 78Z"/>
-        <path class="lb" d="M1416 78 Q1394 58 1386 38 Q1406 36 1418 54 Q1422 66 1416 78Z"/>
-      </g>
-
-      <g opacity=".3">
-        <circle class="dt" cx="1408" cy="588" r="4.5"/>
-        <circle class="dt" cx="1422" cy="578" r="3.5"/>
-        <circle class="dt" cx="1414" cy="566" r="4"/>
-        <circle class="dt" cx="1400" cy="572" r="3"/>
-        <circle class="dt" cx="1426" cy="560" r="2.5"/>
-
-        <circle class="dt" cx="1412" cy="398" r="4"/>
-        <circle class="dt" cx="1426" cy="388" r="3"/>
-        <circle class="dt" cx="1418" cy="376" r="3.5"/>
-        <circle class="dt" cx="1404" cy="382" r="2.5"/>
-
-        <circle class="dt" cx="1410" cy="198" r="3.5"/>
-        <circle class="dt" cx="1424" cy="188" r="3"/>
-        <circle class="dt" cx="1416" cy="176" r="4"/>
-        <circle class="dt" cx="1402" cy="182" r="2.5"/>
-        <circle class="dt" cx="1428" cy="174" r="2"/>
-
-        <circle class="dt" cx="1414" cy="80" r="3"/>
-        <circle class="dt" cx="1428" cy="72" r="2.5"/>
-        <circle class="dt" cx="1420" cy="62" r="3.5"/>
-      </g>
-
-      <!-- ══════════════════════════════════════════════ -->
-      <!--  Ц В Е Т Ы   В Е Р Х Н И Е                 -->
-      <!-- ══════════════════════════════════════════════ -->
-
-      <!-- Цветок верх-лево крупный -->
-      <g opacity=".3" transform="translate(310 30)">
-        <path class="s2" d="M0 80 Q-4 50 0 10"/>
-        <path class="la" d="M0 55 Q-32 38 -44 14 Q-22 8 -6 28 Q0 42 0 55Z"/>
-        <path class="lb" d="M0 55 Q32 36 44 12 Q22 6 6 26 Q0 40 0 55Z"/>
-        <g transform="translate(0,10)">
-          <ellipse class="pa" cx="0" cy="-22" rx="11" ry="23"/>
-          <ellipse class="pa" cx="20" cy="-14" rx="11" ry="23" transform="rotate(54 20 -14)"/>
-          <ellipse class="pb" cx="22" cy="9" rx="11" ry="23" transform="rotate(114 22 9)"/>
-          <ellipse class="pb" cx="0" cy="22" rx="11" ry="23"/>
-          <ellipse class="pb" cx="-22" cy="9" rx="11" ry="23" transform="rotate(-114 -22 9)"/>
-          <ellipse class="pa" cx="-20" cy="-14" rx="11" ry="23" transform="rotate(-54 -20 -14)"/>
-          <path class="s3" d="M0 0 Q0 -14 0 -22"/>
-          <path class="s3" d="M0 0 Q12 -8 20 -14"/>
-          <path class="s3" d="M0 0 Q14 5 22 9"/>
-          <path class="s3" d="M0 0 Q0 14 0 22"/>
-          <path class="s3" d="M0 0 Q-14 5 -22 9"/>
-          <path class="s3" d="M0 0 Q-12 -8 -20 -14"/>
-          <circle class="ct" r="10"/>
-          <circle fill="#e8d090" opacity=".5" r="5"/>
-        </g>
-      </g>
-
-      <!-- Цветок верх-право крупный -->
-      <g opacity=".3" transform="translate(1130 28)">
-        <path class="s2" d="M0 78 Q4 48 0 8"/>
-        <path class="lb" d="M0 52 Q-30 36 -42 12 Q-20 6 -4 26 Q0 40 0 52Z"/>
-        <path class="la" d="M0 52 Q30 34 42 10 Q20 4 4 24 Q0 38 0 52Z"/>
-        <g transform="translate(0,8)">
-          <ellipse class="pb" cx="0" cy="-21" rx="10" ry="22"/>
-          <ellipse class="pb" cx="19" cy="-13" rx="10" ry="22" transform="rotate(54 19 -13)"/>
-          <ellipse class="pa" cx="21" cy="8" rx="10" ry="22" transform="rotate(114 21 8)"/>
-          <ellipse class="pa" cx="0" cy="21" rx="10" ry="22"/>
-          <ellipse class="pa" cx="-21" cy="8" rx="10" ry="22" transform="rotate(-114 -21 8)"/>
-          <ellipse class="pb" cx="-19" cy="-13" rx="10" ry="22" transform="rotate(-54 -19 -13)"/>
-          <path class="s3" d="M0 0 Q0 -13 0 -21"/>
-          <path class="s3" d="M0 0 Q11 -7 19 -13"/>
-          <path class="s3" d="M0 0 Q13 4 21 8"/>
-          <path class="s3" d="M0 0 Q0 13 0 21"/>
-          <path class="s3" d="M0 0 Q-13 4 -21 8"/>
-          <path class="s3" d="M0 0 Q-11 -7 -19 -13"/>
-          <circle class="ct" r="9"/>
-          <circle fill="#e8d090" opacity=".5" r="4.5"/>
-        </g>
-      </g>
-
-      <!-- Маленькие цветки и бутоны сверху центр -->
-      <g opacity=".25">
-        <g transform="translate(560 20)">
-          <path class="s3" d="M0 52 Q0 28 0 4"/>
-          <path class="la" d="M0 36 Q-20 24 -28 6 Q-12 2 -2 18 Q0 28 0 36Z"/>
-          <path class="lb" d="M0 36 Q20 22 28 4 Q12 0 2 16 Q0 26 0 36Z"/>
-          <g transform="translate(0,4)">
-            <ellipse class="pa" cx="0" cy="-14" rx="7" ry="15"/>
-            <ellipse class="pa" cx="13" cy="-8" rx="7" ry="15" transform="rotate(54 13 -8)"/>
-            <ellipse class="pb" cx="14" cy="6" rx="7" ry="15" transform="rotate(112 14 6)"/>
-            <ellipse class="pb" cx="0" cy="14" rx="7" ry="15"/>
-            <ellipse class="pb" cx="-14" cy="6" rx="7" ry="15" transform="rotate(-112 -14 6)"/>
-            <ellipse class="pa" cx="-13" cy="-8" rx="7" ry="15" transform="rotate(-54 -13 -8)"/>
-            <circle class="ct" r="6.5"/>
-          </g>
-        </g>
-
-        <g transform="translate(880 18)">
-          <path class="s3" d="M0 50 Q0 26 0 2"/>
-          <path class="lb" d="M0 34 Q-18 22 -26 4 Q-10 0 -2 16 Q0 26 0 34Z"/>
-          <path class="la" d="M0 34 Q18 20 26 2 Q10 -2 2 14 Q0 24 0 34Z"/>
-          <g transform="translate(0,2)">
-            <ellipse class="pb" cx="0" cy="-13" rx="7" ry="14"/>
-            <ellipse class="pb" cx="12" cy="-8" rx="7" ry="14" transform="rotate(54 12 -8)"/>
-            <ellipse class="pa" cx="13" cy="5" rx="7" ry="14" transform="rotate(112 13 5)"/>
-            <ellipse class="pa" cx="0" cy="13" rx="7" ry="14"/>
-            <ellipse class="pa" cx="-13" cy="5" rx="7" ry="14" transform="rotate(-112 -13 5)"/>
-            <ellipse class="pb" cx="-12" cy="-8" rx="7" ry="14" transform="rotate(-54 -12 -8)"/>
-            <circle class="ct" r="6"/>
-          </g>
-        </g>
-
-        <!-- бутоны сверху -->
-        <g transform="translate(440 15)">
-          <path class="s3" d="M0 42 Q0 22 0 0"/>
-          <path class="pa" d="M0 0 Q-8 -14 -6 -26 Q0 -30 6 -26 Q8 -14 0 0Z"/>
-          <path class="pb" d="M0 0 Q10 -12 12 -24 Q6 -28 0 -18 Q-1 -8 0 0Z"/>
-          <path class="pb" d="M0 0 Q-10 -12 -12 -24 Q-6 -28 0 -18 Q1 -8 0 0Z"/>
-          <path class="la" d="M0 16 Q-16 8 -22 -4 Q-8 -7 -2 6 Q0 12 0 16Z"/>
-          <path class="lb" d="M0 16 Q16 6 22 -6 Q8 -9 2 4 Q0 10 0 16Z"/>
-        </g>
-
-        <g transform="translate(1000 14)">
-          <path class="s3" d="M0 40 Q0 20 0 -2"/>
-          <path class="pb" d="M0 -2 Q-7 -16 -5 -28 Q0 -32 5 -28 Q7 -16 0 -2Z"/>
-          <path class="pa" d="M0 -2 Q9 -14 11 -26 Q5 -30 0 -20 Q-1 -10 0 -2Z"/>
-          <path class="pa" d="M0 -2 Q-9 -14 -11 -26 Q-5 -30 0 -20 Q1 -10 0 -2Z"/>
-          <path class="lb" d="M0 14 Q-15 6 -21 -6 Q-7 -9 -1 4 Q0 10 0 14Z"/>
-          <path class="la" d="M0 14 Q15 4 21 -8 Q7 -11 1 2 Q0 8 0 14Z"/>
-        </g>
-      </g>
-
-      <!-- ══════════════════════════════════════════════ -->
-      <!--  Ц В Е Т Ы   Н И Ж Н И Е   (обильно)        -->
-      <!-- ══════════════════════════════════════════════ -->
-
-      <!-- Цветок нижний 1 — крупный слева -->
-      <g opacity=".3" transform="translate(188 858)">
-        <path class="s1" d="M0 40 Q-6 10 0 -30"/>
-        <path class="la" d="M0 18 Q-36 0 -50 -22 Q-26 -28 -8 -10 Q0 4 0 18Z"/>
-        <path class="lb" d="M0 18 Q36 -2 50 -24 Q26 -30 8 -12 Q0 2 0 18Z"/>
-        <g transform="translate(0,-30)">
-          <ellipse class="pa" cx="0" cy="-24" rx="12" ry="26"/>
-          <ellipse class="pa" cx="22" cy="-16" rx="12" ry="26" transform="rotate(54 22 -16)"/>
-          <ellipse class="pb" cx="24" cy="10" rx="12" ry="26" transform="rotate(114 24 10)"/>
-          <ellipse class="pb" cx="0" cy="24" rx="12" ry="26"/>
-          <ellipse class="pb" cx="-24" cy="10" rx="12" ry="26" transform="rotate(-114 -24 10)"/>
-          <ellipse class="pa" cx="-22" cy="-16" rx="12" ry="26" transform="rotate(-54 -22 -16)"/>
-          <path class="s3" d="M0 0 Q0 -16 0 -24"/>
-          <path class="s3" d="M0 0 Q13 -9 22 -16"/>
-          <path class="s3" d="M0 0 Q15 6 24 10"/>
-          <path class="s3" d="M0 0 Q0 16 0 24"/>
-          <path class="s3" d="M0 0 Q-15 6 -24 10"/>
-          <path class="s3" d="M0 0 Q-13 -9 -22 -16"/>
-          <circle class="ct" r="11"/>
-          <circle fill="#e8d090" opacity=".6" r="6"/>
-          <circle stroke="#9a7838" stroke-width=".6" fill="none" r="11"/>
-        </g>
-      </g>
-
-      <!-- Цветок нижний 2 — по центру слева -->
-      <g opacity=".28" transform="translate(430 876)">
-        <path class="s2" d="M0 28 Q-2 8 0 -20"/>
-        <path class="lb" d="M0 14 Q-24 2 -34 -14 Q-16 -18 -4 -4 Q0 6 0 14Z"/>
-        <path class="la" d="M0 14 Q24 0 34 -16 Q16 -20 4 -6 Q0 4 0 14Z"/>
-        <g transform="translate(0,-20)">
-          <ellipse class="pb" cx="0" cy="-18" rx="9" ry="19"/>
-          <ellipse class="pb" cx="16" cy="-11" rx="9" ry="19" transform="rotate(54 16 -11)"/>
-          <ellipse class="pa" cx="18" cy="7" rx="9" ry="19" transform="rotate(114 18 7)"/>
-          <ellipse class="pa" cx="0" cy="18" rx="9" ry="19"/>
-          <ellipse class="pa" cx="-18" cy="7" rx="9" ry="19" transform="rotate(-114 -18 7)"/>
-          <ellipse class="pb" cx="-16" cy="-11" rx="9" ry="19" transform="rotate(-54 -16 -11)"/>
-          <circle class="ct" r="8"/>
-          <circle fill="#e8d090" opacity=".5" r="4"/>
-        </g>
-      </g>
-
-      <!-- Цветок нижний 3 — центр -->
-      <g opacity=".3" transform="translate(720 884)">
-        <path class="s1" d="M0 18 Q2 4 0 -24"/>
-        <path class="la" d="M0 8 Q-26 -4 -36 -20 Q-16 -24 -2 -10 Q0 0 0 8Z"/>
-        <path class="lb" d="M0 8 Q26 -6 36 -22 Q16 -26 2 -12 Q0 -2 0 8Z"/>
-        <g transform="translate(0,-24)">
-          <ellipse class="pa" cx="0" cy="-20" rx="10" ry="22"/>
-          <ellipse class="pa" cx="18" cy="-13" rx="10" ry="22" transform="rotate(54 18 -13)"/>
-          <ellipse class="pb" cx="20" cy="8" rx="10" ry="22" transform="rotate(114 20 8)"/>
-          <ellipse class="pb" cx="0" cy="20" rx="10" ry="22"/>
-          <ellipse class="pb" cx="-20" cy="8" rx="10" ry="22" transform="rotate(-114 -20 8)"/>
-          <ellipse class="pa" cx="-18" cy="-13" rx="10" ry="22" transform="rotate(-54 -18 -13)"/>
-          <path class="s3" d="M0 0 Q0 -13 0 -20"/>
-          <path class="s3" d="M0 0 Q11 -7 18 -13"/>
-          <path class="s3" d="M0 0 Q12 5 20 8"/>
-          <path class="s3" d="M0 0 Q0 13 0 20"/>
-          <path class="s3" d="M0 0 Q-12 5 -20 8"/>
-          <path class="s3" d="M0 0 Q-11 -7 -18 -13"/>
-          <circle class="ct" r="9"/>
-          <circle fill="#e8d090" opacity=".55" r="4.5"/>
-          <circle stroke="#9a7838" stroke-width=".5" fill="none" r="9"/>
-        </g>
-      </g>
-
-      <!-- Цветок нижний 4 — правее центра -->
-      <g opacity=".27" transform="translate(1010 872)">
-        <path class="s2" d="M0 30 Q2 10 0 -18"/>
-        <path class="lb" d="M0 16 Q-22 4 -32 -12 Q-14 -16 -2 -2 Q0 6 0 16Z"/>
-        <path class="la" d="M0 16 Q22 2 32 -14 Q14 -18 2 -4 Q0 4 0 16Z"/>
-        <g transform="translate(0,-18)">
-          <ellipse class="pa" cx="0" cy="-17" rx="9" ry="18"/>
-          <ellipse class="pa" cx="16" cy="-10" rx="9" ry="18" transform="rotate(54 16 -10)"/>
-          <ellipse class="pb" cx="17" cy="6" rx="9" ry="18" transform="rotate(114 17 6)"/>
-          <ellipse class="pb" cx="0" cy="17" rx="9" ry="18"/>
-          <ellipse class="pb" cx="-17" cy="6" rx="9" ry="18" transform="rotate(-114 -17 6)"/>
-          <ellipse class="pa" cx="-16" cy="-10" rx="9" ry="18" transform="rotate(-54 -16 -10)"/>
-          <circle class="ct" r="8"/>
-          <circle fill="#e8d090" opacity=".5" r="4"/>
-        </g>
-      </g>
-
-      <!-- Цветок нижний 5 — крупный справа -->
-      <g opacity=".3" transform="translate(1252 860)">
-        <path class="s1" d="M0 38 Q6 10 0 -28"/>
-        <path class="la" d="M0 16 Q-34 -2 -48 -24 Q-24 -30 -6 -12 Q0 2 0 16Z"/>
-        <path class="lb" d="M0 16 Q34 -4 48 -26 Q24 -32 6 -14 Q0 0 0 16Z"/>
-        <g transform="translate(0,-28)">
-          <ellipse class="pb" cx="0" cy="-23" rx="11" ry="25"/>
-          <ellipse class="pb" cx="21" cy="-15" rx="11" ry="25" transform="rotate(54 21 -15)"/>
-          <ellipse class="pa" cx="23" cy="9" rx="11" ry="25" transform="rotate(114 23 9)"/>
-          <ellipse class="pa" cx="0" cy="23" rx="11" ry="25"/>
-          <ellipse class="pa" cx="-23" cy="9" rx="11" ry="25" transform="rotate(-114 -23 9)"/>
-          <ellipse class="pb" cx="-21" cy="-15" rx="11" ry="25" transform="rotate(-54 -21 -15)"/>
-          <path class="s3" d="M0 0 Q0 -15 0 -23"/>
-          <path class="s3" d="M0 0 Q13 -9 21 -15"/>
-          <path class="s3" d="M0 0 Q14 6 23 9"/>
-          <path class="s3" d="M0 0 Q0 15 0 23"/>
-          <path class="s3" d="M0 0 Q-14 6 -23 9"/>
-          <path class="s3" d="M0 0 Q-13 -9 -21 -15"/>
-          <circle class="ct" r="10"/>
-          <circle fill="#e8d090" opacity=".6" r="5.5"/>
-          <circle stroke="#9a7838" stroke-width=".6" fill="none" r="10"/>
-        </g>
-      </g>
-
-      <!-- Травы и бутоны нижней зоны — много -->
-      <g opacity=".27">
-        <!-- бутоны -->
-        <g transform="translate(310 895)">
-          <path class="s2" d="M0 6 Q-2 -14 0 -36"/>
-          <path class="pa" d="M0 -36 Q-9 -50 -7 -64 Q0 -68 7 -64 Q9 -50 0 -36Z"/>
-          <path class="pb" d="M0 -36 Q11 -48 13 -62 Q7 -66 0 -54 Q-2 -44 0 -36Z"/>
-          <path class="pb" d="M0 -36 Q-11 -48 -13 -62 Q-7 -66 0 -54 Q2 -44 0 -36Z"/>
-          <path class="la" d="M0 -16 Q-18 -24 -26 -38 Q-10 -42 -2 -28 Q0 -22 0 -16Z"/>
-          <path class="lb" d="M0 -16 Q18 -26 26 -40 Q10 -44 2 -30 Q0 -24 0 -16Z"/>
-        </g>
-        <g transform="translate(572 900)">
-          <path class="s2" d="M0 2 Q2 -16 0 -38"/>
-          <path class="pb" d="M0 -38 Q-8 -52 -6 -66 Q0 -70 6 -66 Q8 -52 0 -38Z"/>
-          <path class="pa" d="M0 -38 Q10 -50 12 -64 Q6 -68 0 -56 Q-2 -46 0 -38Z"/>
-          <path class="pa" d="M0 -38 Q-10 -50 -12 -64 Q-6 -68 0 -56 Q2 -46 0 -38Z"/>
-          <path class="lb" d="M0 -18 Q-16 -26 -24 -40 Q-8 -44 -2 -30 Q0 -24 0 -18Z"/>
-          <path class="la" d="M0 -18 Q16 -28 24 -42 Q8 -46 2 -32 Q0 -26 0 -18Z"/>
-        </g>
-        <g transform="translate(868 895)">
-          <path class="s2" d="M0 6 Q-2 -14 0 -36"/>
-          <path class="pa" d="M0 -36 Q-8 -50 -6 -62 Q0 -66 6 -62 Q8 -50 0 -36Z"/>
-          <path class="pb" d="M0 -36 Q10 -48 12 -60 Q6 -64 0 -52 Q-2 -42 0 -36Z"/>
-          <path class="pb" d="M0 -36 Q-10 -48 -12 -60 Q-6 -64 0 -52 Q2 -42 0 -36Z"/>
-          <path class="la" d="M0 -14 Q-16 -22 -24 -36 Q-8 -40 -2 -26 Q0 -20 0 -14Z"/>
-          <path class="lb" d="M0 -14 Q16 -24 24 -38 Q8 -42 2 -28 Q0 -22 0 -14Z"/>
-        </g>
-        <g transform="translate(1168 898)">
-          <path class="s2" d="M0 4 Q2 -16 0 -38"/>
-          <path class="pb" d="M0 -38 Q-9 -52 -7 -66 Q0 -70 7 -66 Q9 -52 0 -38Z"/>
-          <path class="pa" d="M0 -38 Q11 -50 13 -64 Q7 -68 0 -56 Q-2 -46 0 -38Z"/>
-          <path class="pa" d="M0 -38 Q-11 -50 -13 -64 Q-7 -68 0 -56 Q2 -46 0 -38Z"/>
-          <path class="lb" d="M0 -18 Q-18 -26 -26 -40 Q-10 -44 -2 -30 Q0 -24 0 -18Z"/>
-          <path class="la" d="M0 -18 Q18 -28 26 -42 Q10 -46 2 -32 Q0 -26 0 -18Z"/>
-        </g>
-
-        <!-- травы-стебли с листиками -->
-        <path class="s2" d="M376 900 Q370 870 366 840 Q360 808 368 778"/>
-        <path class="la" d="M366 840 Q344 822 336 800 Q354 796 364 814 Q366 828 366 840Z"/>
-        <path class="lb" d="M366 840 Q388 820 396 798 Q378 794 366 812 Q364 826 366 840Z"/>
-
-        <path class="s2" d="M648 900 Q654 872 658 842 Q664 810 656 780"/>
-        <path class="lb" d="M658 842 Q636 824 628 802 Q646 798 656 816 Q658 830 658 842Z"/>
-        <path class="la" d="M658 842 Q680 822 688 800 Q670 796 658 814 Q656 828 658 842Z"/>
-
-        <path class="s2" d="M792 900 Q786 872 782 842 Q776 810 784 780"/>
-        <path class="la" d="M782 842 Q760 824 752 802 Q770 798 780 816 Q782 830 782 842Z"/>
-        <path class="lb" d="M782 842 Q804 822 812 800 Q794 796 782 814 Q780 828 782 842Z"/>
-
-        <path class="s2" d="M1092 900 Q1098 872 1102 842 Q1108 810 1100 780"/>
-        <path class="lb" d="M1102 842 Q1080 824 1072 802 Q1090 798 1100 816 Q1102 830 1102 842Z"/>
-        <path class="la" d="M1102 842 Q1124 822 1132 800 Q1114 796 1102 814 Q1100 828 1102 842Z"/>
-
-        <!-- ягоды снизу -->
-        <circle class="dt" cx="366" cy="778" r="4"/><circle class="dt" cx="354" cy="768" r="3"/><circle class="dt" cx="376" cy="766" r="3.5"/>
-        <circle class="dt" cx="656" cy="780" r="3.5"/><circle class="dt" cx="668" cy="772" r="3"/><circle class="dt" cx="646" cy="770" r="2.5"/>
-        <circle class="dt" cx="784" cy="780" r="4"/><circle class="dt" cx="772" cy="770" r="3"/><circle class="dt" cx="794" cy="768" r="3.5"/>
-        <circle class="dt" cx="1100" cy="780" r="3.5"/><circle class="dt" cx="1112" cy="772" r="3"/><circle class="dt" cx="1090" cy="770" r="2.5"/>
-      </g>
-
-    </svg>
-
-    <!-- Анимированные частицы поверх -->
-    <canvas id="heroCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.3"></canvas>
-
-    <p class="hero-eyebrow">ИИ · Фотография · Визуальный контент</p>
-    <h1>Ваш образ, созданный <em>нейросетью</em></h1>
-    <p class="hero-sub">ИИ-фотосессии, карточки товаров и восстановление фотографий — профессиональный визуал без студии.</p>
-    <div class="hero-cta">
+    <p class="hero-eyebrow" style="position:relative;z-index:2">ИИ · Фотография · Визуальный контент</p>
+    <h1 style="position:relative;z-index:2">Ваш образ, созданный <em>нейросетью</em></h1>
+    <p class="hero-sub" style="position:relative;z-index:2">ИИ-фотосессии, карточки товаров и восстановление фотографий — профессиональный визуал без студии.</p>
+    <div class="hero-cta" style="position:relative;z-index:2">
       <a href="#services" class="btn btn-primary">Смотреть услуги</a>
       <a href="#contact"  class="btn btn-ghost">Заказать</a>
     </div>
@@ -1346,6 +871,19 @@
     <p>© 2026 <span>Константин Монтэге · ИИ сервисы</span> — Все права защищены</p>
   </footer>
 
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <button class="lb-close" id="lbClose">&#x2715;</button>
+    <button class="lb-arrow lb-prev" id="lbPrev">&#x2039;</button>
+    <button class="lb-arrow lb-next" id="lbNext">&#x203A;</button>
+    <img class="lb-img" id="lbImg" src="" alt="" style="display:none">
+    <div class="lb-fallback" id="lbFallback" style="display:none"></div>
+    <div class="lb-info">
+      <div class="lb-counter" id="lbCounter"></div>
+      <div class="lb-title" id="lbTitle"></div>
+    </div>
+  </div>
+
   <script>
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => navbar.classList.toggle('shrunk', window.scrollY > 60));
@@ -1404,88 +942,235 @@
       }
     });
 
-    // ── Hero Canvas Animation ──
+    // ── Tetris Background ──
     const canvas = document.getElementById('heroCanvas');
-    const ctx = canvas.getContext('2d');
-    let W, H, particles, mouse = { x: null, y: null };
+    const ctx    = canvas.getContext('2d');
+    let W, H;
 
     function resize() {
       W = canvas.width  = canvas.offsetWidth;
       H = canvas.height = canvas.offsetHeight;
     }
 
-    class Particle {
-      constructor() { this.reset(true); }
-      reset(init) {
-        this.x     = Math.random() * W;
-        this.y     = init ? Math.random() * H : H + 10;
-        this.r     = Math.random() * 1.8 + .4;
-        this.vx    = (Math.random() - .5) * .4;
-        this.vy    = -(Math.random() * .6 + .2);
-        this.alpha = Math.random() * .6 + .2;
-        this.color = Math.random() > .5 ? '196,154,108' : '140,106,74';
+    // Все 7 фигур тетриса
+    const SHAPES = [
+      // I
+      [[1,1,1,1]],
+      // O
+      [[1,1],[1,1]],
+      // T
+      [[0,1,0],[1,1,1]],
+      // S
+      [[0,1,1],[1,1,0]],
+      // Z
+      [[1,1,0],[0,1,1]],
+      // L
+      [[1,0],[1,0],[1,1]],
+      // J
+      [[0,1],[0,1],[1,1]],
+    ];
+
+    // Цвета — приглушённые, полупрозрачные чтобы не мешать тексту
+    const COLORS = [
+      'rgba(80,200,230,',   // I — голубой
+      'rgba(240,200,40,',   // O — жёлтый
+      'rgba(160,80,220,',   // T — фиолетовый
+      'rgba(60,200,100,',   // S — зелёный
+      'rgba(230,60,60,',    // Z — красный
+      'rgba(230,130,40,',   // L — оранжевый
+      'rgba(60,100,230,',   // J — синий
+    ];
+
+    const CELL = 28; // размер клетки в пикселях
+
+    function randomShape() {
+      const idx = Math.floor(Math.random() * SHAPES.length);
+      // Случайный поворот
+      let shape = SHAPES[idx];
+      const rotations = Math.floor(Math.random() * 4);
+      for (let r = 0; r < rotations; r++) {
+        shape = rotate(shape);
       }
-      update() {
-        if (mouse.x !== null) {
-          const dx = this.x - mouse.x, dy = this.y - mouse.y;
-          const dist = Math.sqrt(dx*dx + dy*dy);
-          if (dist < 120) { this.vx += dx/dist*.06; this.vy += dy/dist*.06; }
-        }
-        this.x += this.vx; this.y += this.vy;
-        this.vx *= .99; this.vy *= .99;
-        if (this.y < -10 || this.x < -10 || this.x > W+10) this.reset(false);
-      }
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
-        ctx.fillStyle = `rgba(${this.color},${this.alpha})`;
-        ctx.fill();
-      }
+      return { shape, color: COLORS[idx] };
     }
 
-    function drawLines() {
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i+1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx*dx + dy*dy);
-          if (dist < 90) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(196,154,108,${(1-dist/90)*.18})`;
-            ctx.lineWidth = .6;
-            ctx.stroke();
+    function rotate(matrix) {
+      const rows = matrix.length, cols = matrix[0].length;
+      const res = Array.from({ length: cols }, () => Array(rows).fill(0));
+      for (let r = 0; r < rows; r++)
+        for (let c = 0; c < cols; c++)
+          res[c][rows - 1 - r] = matrix[r][c];
+      return res;
+    }
+
+    class TetrisPiece {
+      constructor() { this.spawn(); }
+
+      spawn() {
+        const { shape, color } = randomShape();
+        this.shape  = shape;
+        this.color  = color;
+        this.cols   = this.shape[0].length;
+        this.rows   = this.shape.length;
+        // Случайная горизонтальная позиция
+        this.x      = Math.random() * (W - this.cols * CELL);
+        // Стартует выше экрана
+        this.y      = -this.rows * CELL - Math.random() * H * 0.5;
+        // Очень медленная скорость падения
+        this.vy     = 0.15 + Math.random() * 0.25;
+        // Лёгкое вращение
+        this.rot    = Math.random() * Math.PI * 2;
+        this.drot   = (Math.random() - 0.5) * 0.002;
+        // Прозрачность — достаточно низкая чтобы не мешать
+        this.alpha  = 0.06 + Math.random() * 0.10;
+        // Размер клетки — разный для глубины
+        this.cell   = CELL * (0.6 + Math.random() * 0.8);
+      }
+
+      update() {
+        this.y   += this.vy;
+        this.rot += this.drot;
+        if (this.y > H + this.rows * this.cell + 20) this.spawn();
+      }
+
+      draw() {
+        ctx.save();
+        const cx = this.x + (this.cols * this.cell) / 2;
+        const cy = this.y + (this.rows * this.cell) / 2;
+        ctx.translate(cx, cy);
+        ctx.rotate(this.rot);
+        ctx.translate(-this.cols * this.cell / 2, -this.rows * this.cell / 2);
+
+        for (let r = 0; r < this.rows; r++) {
+          for (let c = 0; c < this.cols; c++) {
+            if (!this.shape[r][c]) continue;
+            const x = c * this.cell;
+            const y = r * this.cell;
+            const s = this.cell - 2;
+
+            // Заливка
+            ctx.fillStyle = this.color + this.alpha + ')';
+            ctx.fillRect(x, y, s, s);
+
+            // Контур
+            ctx.strokeStyle = this.color + (this.alpha * 1.8) + ')';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x + 0.5, y + 0.5, s - 1, s - 1);
+
+            // Блик сверху-слева
+            ctx.fillStyle = `rgba(255,255,255,${this.alpha * 0.6})`;
+            ctx.fillRect(x + 1, y + 1, s * 0.4, 2);
+            ctx.fillRect(x + 1, y + 1, 2, s * 0.4);
           }
         }
+        ctx.restore();
       }
     }
 
-    function initParticles() {
+    let pieces = [];
+
+    function initTetris() {
       resize();
-      const count = Math.min(Math.floor((W * H) / 7000), 120);
-      particles = Array.from({ length: count }, () => new Particle());
+      // Создаём фигуры распределённые по всему экрану сразу
+      pieces = Array.from({ length: 22 }, (_, i) => {
+        const p = new TetrisPiece();
+        // Распределяем по высоте чтобы сразу было заполнено
+        p.y = Math.random() * H;
+        return p;
+      });
     }
 
     function loop() {
       ctx.clearRect(0, 0, W, H);
-      drawLines();
-      particles.forEach(p => { p.update(); p.draw(); });
+      pieces.forEach(p => { p.update(); p.draw(); });
       requestAnimationFrame(loop);
     }
 
-    window.addEventListener('resize', initParticles);
-    document.getElementById('hero').addEventListener('mousemove', e => {
-      const r = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - r.left;
-      mouse.y = e.clientY - r.top;
-    });
-    document.getElementById('hero').addEventListener('mouseleave', () => {
-      mouse.x = null; mouse.y = null;
+    window.addEventListener('resize', initTetris);
+    initTetris();
+    loop();
+
+    // ── LIGHTBOX ──
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lbImg');
+    const lbFallback = document.getElementById('lbFallback');
+    const lbTitle = document.getElementById('lbTitle');
+    const lbCounter = document.getElementById('lbCounter');
+    let lbItems = [], lbIdx = 0;
+
+    // Собираем все карточки портфолио
+    function buildGallery() {
+      lbItems = [];
+      document.querySelectorAll('.port-item').forEach((item, i) => {
+        const img = item.querySelector('.port-img');
+        const titleEl = item.querySelector('.port-title-label');
+        const catEl = item.querySelector('.port-cat-label');
+        lbItems.push({
+          src: img ? img.src : null,
+          title: (titleEl ? titleEl.textContent : '') + (catEl ? ' · ' + catEl.textContent : ''),
+          el: item
+        });
+        item.style.cursor = 'pointer';
+        item.addEventListener('click', () => openLB(i));
+      });
+    }
+
+    function openLB(idx) {
+      lbIdx = idx;
+      lb.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      showLB();
+    }
+
+    function showLB() {
+      const item = lbItems[lbIdx];
+      lbCounter.textContent = (lbIdx + 1) + ' / ' + lbItems.length;
+      lbTitle.textContent = item.title;
+      lbImg.classList.add('fading');
+      lbFallback.style.display = 'none';
+      lbImg.style.display = 'none';
+      setTimeout(() => {
+        if (item.src) {
+          lbImg.src = item.src;
+          lbImg.onload = () => { lbImg.style.display = 'block'; lbImg.classList.remove('fading'); };
+          lbImg.onerror = () => { lbImg.style.display = 'none'; lbFallback.style.display = 'flex'; lbFallback.textContent = item.title || 'Фото'; };
+        } else {
+          lbFallback.style.display = 'flex';
+          lbFallback.textContent = item.title || 'Фото';
+        }
+        lbImg.classList.remove('fading');
+      }, 120);
+    }
+
+    function closeLB() {
+      lb.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function prevLB() { lbIdx = (lbIdx - 1 + lbItems.length) % lbItems.length; showLB(); }
+    function nextLB() { lbIdx = (lbIdx + 1) % lbItems.length; showLB(); }
+
+    document.getElementById('lbClose').addEventListener('click', closeLB);
+    document.getElementById('lbPrev').addEventListener('click', prevLB);
+    document.getElementById('lbNext').addEventListener('click', nextLB);
+    lb.addEventListener('click', e => { if (e.target === lb) closeLB(); });
+
+    document.addEventListener('keydown', e => {
+      if (!lb.classList.contains('active')) return;
+      if (e.key === 'ArrowLeft')  prevLB();
+      if (e.key === 'ArrowRight') nextLB();
+      if (e.key === 'Escape')     closeLB();
     });
 
-    initParticles();
-    loop();
+    // Свайп на мобильных
+    let touchStartX = 0;
+    lb.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    lb.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) dx < 0 ? nextLB() : prevLB();
+    });
+
+    buildGallery();
   </script>
 </body>
 </html>
