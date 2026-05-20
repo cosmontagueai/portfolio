@@ -283,6 +283,38 @@
 
     @media (max-width: 1024px) { .service-cards-row { grid-template-columns: 1fr 1fr; } .port-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 900px) { nav { padding: 1.2rem 2rem; } nav.shrunk { padding: .8rem 2rem; } .nav-links { display: none; } .burger { display: flex; } .about-grid { grid-template-columns: 1fr; gap: 3rem; } .about-visual { max-width: 300px; } .contact-wrap { grid-template-columns: 1fr; gap: 3rem; } .port-header { flex-direction: column; align-items: flex-start; } }
+    /* ── REVIEWS ── */
+    #reviews { background: var(--dark); padding: 6rem 2rem; }
+    #reviews .section-label { color: var(--accent); }
+    #reviews .section-title { color: var(--sand); }
+    #reviews .section-title em { color: var(--accent); }
+    .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+    .review-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(196,154,108,.12);
+      border-radius: 2px;
+      padding: 2rem 1.8rem;
+      display: flex; flex-direction: column; gap: 1.2rem;
+      transition: background .3s, border-color .3s;
+    }
+    .review-card:hover { background: rgba(255,255,255,.07); border-color: rgba(196,154,108,.28); }
+    .review-stars { display: flex; gap: 3px; }
+    .review-stars span { color: var(--accent); font-size: 1rem; }
+    .review-text { font-family: var(--font-display); font-size: 1.05rem; font-style: italic; color: rgba(245,240,232,.75); line-height: 1.7; flex: 1; }
+    .review-text::before { content: '«'; }
+    .review-text::after  { content: '»'; }
+    .review-author { display: flex; align-items: center; gap: .9rem; margin-top: .4rem; }
+    .review-avatar {
+      width: 46px; height: 46px; border-radius: 50%;
+      object-fit: cover; flex-shrink: 0;
+      border: 1.5px solid rgba(196,154,108,.3);
+      background: var(--mid);
+    }
+    .review-name { font-size: .88rem; color: var(--sand); font-weight: 400; }
+    .review-service { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-top: .15rem; }
+    @media (max-width: 900px) { .reviews-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) { .reviews-grid { grid-template-columns: 1fr; } }
+
     @media (max-width: 600px) { section, .port-section { padding: 4rem 1.2rem; } .service-cards-row { grid-template-columns: 1fr; } .port-grid { grid-template-columns: 1fr 1fr; gap: .5rem; } .restore-pair { grid-template-columns: 1fr; } .stats { gap: 1.5rem; } }
 
     /* ── LIGHTBOX ── */
@@ -316,6 +348,7 @@
       <li><a href="#port-banners">Баннеры</a></li>
       <li><a href="#port-cards">Карточки</a></li>
       <li><a href="#port-restore">Реставрация</a></li>
+      <li><a href="#reviews">Отзывы</a></li>
       <li><a href="#contact">Контакты</a></li>
     </ul>
     <button class="burger" id="burger" aria-label="Меню"><span></span><span></span><span></span></button>
@@ -330,6 +363,7 @@
     <a href="#port-banners" onclick="closeMenu()">Баннеры</a>
     <a href="#port-cards"   onclick="closeMenu()">Карточки товаров</a>
     <a href="#port-restore" onclick="closeMenu()">Реставрация фото</a>
+    <a href="#reviews"      onclick="closeMenu()">Отзывы</a>
     <a href="#contact"      onclick="closeMenu()">Контакты</a>
   </div>
 
@@ -809,6 +843,91 @@
     </div>
   </section>
 
+  <!-- ОТЗЫВЫ -->
+  <section id="reviews">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-label">Отзывы</p>
+        <h2 class="section-title">Что говорят <em>клиенты</em></h2>
+      </div>
+      <div class="reviews-grid">
+
+        <div class="review-card reveal">
+          <div class="review-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <p class="review-text">Заказывала ИИ-фотосессию для LinkedIn. Результат превзошёл все ожидания — выглядит как настоящая студийная съёмка. Получила несколько комплиментов от коллег в первый же день!</p>
+          <div class="review-author">
+            <img class="review-avatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Анна">
+            <div>
+              <div class="review-name">Анна Соколова</div>
+              <div class="review-service">ИИ Фотосессия</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card reveal">
+          <div class="review-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <p class="review-text">Заказал карточки товаров для Wildberries. Продажи выросли на 34% за первый месяц после обновления. Константин сделал всё быстро и точно в срок, рекомендую!</p>
+          <div class="review-author">
+            <img class="review-avatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Дмитрий">
+            <div>
+              <div class="review-name">Дмитрий Ларин</div>
+              <div class="review-service">Карточки товаров · WB</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card reveal">
+          <div class="review-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <p class="review-text">Отдала старые семейные фото на реставрацию — некоторые были с 1950-х. Вернула маме на день рождения в цвете. Она плакала от счастья. Спасибо огромное!</p>
+          <div class="review-author">
+            <img class="review-avatar" src="https://randomuser.me/api/portraits/women/68.jpg" alt="Марина">
+            <div>
+              <div class="review-name">Марина Белова</div>
+              <div class="review-service">Реставрация фото</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card reveal">
+          <div class="review-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <p class="review-text">Разработал логотип для нашего кафе. Получили три варианта на выбор, все были крутые. Взяли один сразу без правок. Очень стильно и современно вышло.</p>
+          <div class="review-author">
+            <img class="review-avatar" src="https://randomuser.me/api/portraits/men/56.jpg" alt="Алексей">
+            <div>
+              <div class="review-name">Алексей Громов</div>
+              <div class="review-service">Логотип</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card reveal">
+          <div class="review-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <p class="review-text">Баннеры для рекламной кампании в VK и Instagram — сделаны быстро, красиво, CTR вырос вдвое по сравнению со старыми материалами. Буду заказывать регулярно.</p>
+          <div class="review-author">
+            <img class="review-avatar" src="https://randomuser.me/api/portraits/women/21.jpg" alt="Екатерина">
+            <div>
+              <div class="review-name">Екатерина Новикова</div>
+              <div class="review-service">Баннеры · VK / Instagram</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card reveal">
+          <div class="review-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <p class="review-text">Делал арт-портрет в стиле ренессанс в подарок жене. Она в восторге, распечатали и повесили в рамку. Качество на уровне настоящей картины, никто не верит что это ИИ.</p>
+          <div class="review-author">
+            <img class="review-avatar" src="https://randomuser.me/api/portraits/men/78.jpg" alt="Сергей">
+            <div>
+              <div class="review-name">Сергей Орлов</div>
+              <div class="review-service">ИИ Фотосессия · Арт</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <section id="contact">
     <div class="container contact-wrap">
       <div class="reveal">
@@ -1091,28 +1210,55 @@
     loop();
 
     // ── LIGHTBOX ──
-    const lb = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lbImg');
+    const lb         = document.getElementById('lightbox');
+    const lbImg      = document.getElementById('lbImg');
     const lbFallback = document.getElementById('lbFallback');
-    const lbTitle = document.getElementById('lbTitle');
-    const lbCounter = document.getElementById('lbCounter');
+    const lbTitle    = document.getElementById('lbTitle');
+    const lbCounter  = document.getElementById('lbCounter');
     let lbItems = [], lbIdx = 0;
 
-    // Собираем все карточки портфолио
     function buildGallery() {
       lbItems = [];
-      document.querySelectorAll('.port-item').forEach((item, i) => {
-        const img = item.querySelector('.port-img');
+
+      // Все .port-item карточки
+      document.querySelectorAll('.port-item').forEach(item => {
+        const img     = item.querySelector('.port-img');
         const titleEl = item.querySelector('.port-title-label');
-        const catEl = item.querySelector('.port-cat-label');
-        lbItems.push({
-          src: img ? img.src : null,
-          title: (titleEl ? titleEl.textContent : '') + (catEl ? ' · ' + catEl.textContent : ''),
-          el: item
-        });
+        const catEl   = item.querySelector('.port-cat-label');
+        const restLbl = item.querySelector('.restore-label');
+        let label = '';
+        if (restLbl) label = restLbl.classList.contains('after') ? 'После реставрации' : 'До реставрации';
+        else label = [titleEl, catEl].filter(Boolean).map(e => e.textContent.trim()).join(' · ');
+
+        const entry = {
+          src:   img ? img.src : '',
+          title: label,
+          bg:    getFallbackColor(item),
+        };
+        lbItems.push(entry);
+
         item.style.cursor = 'pointer';
-        item.addEventListener('click', () => openLB(i));
+        const idx = lbItems.length - 1;
+        item.addEventListener('click', e => { e.stopPropagation(); openLB(idx); });
       });
+
+      // Фото клиентов в отзывах — тоже кликабельны
+      document.querySelectorAll('.review-avatar').forEach(img => {
+        img.style.cursor = 'zoom-in';
+        const name = img.closest('.review-author')?.querySelector('.review-name')?.textContent || '';
+        const svc  = img.closest('.review-author')?.querySelector('.review-service')?.textContent || '';
+        const entry = { src: img.src, title: name + (svc ? ' · ' + svc : ''), bg: '#2a1e14' };
+        lbItems.push(entry);
+        const idx = lbItems.length - 1;
+        img.addEventListener('click', e => { e.stopPropagation(); openLB(idx); });
+      });
+    }
+
+    function getFallbackColor(item) {
+      const bg = item.querySelector('.port-fallback');
+      if (!bg) return '#1a1410';
+      const style = window.getComputedStyle(bg);
+      return style.background || '#1a1410';
     }
 
     function openLB(idx) {
@@ -1125,50 +1271,60 @@
     function showLB() {
       const item = lbItems[lbIdx];
       lbCounter.textContent = (lbIdx + 1) + ' / ' + lbItems.length;
-      lbTitle.textContent = item.title;
-      lbImg.classList.add('fading');
-      lbFallback.style.display = 'none';
+      lbTitle.textContent   = item.title || '';
+
+      lbImg.style.opacity = '0';
       lbImg.style.display = 'none';
-      setTimeout(() => {
-        if (item.src) {
-          lbImg.src = item.src;
-          lbImg.onload = () => { lbImg.style.display = 'block'; lbImg.classList.remove('fading'); };
-          lbImg.onerror = () => { lbImg.style.display = 'none'; lbFallback.style.display = 'flex'; lbFallback.textContent = item.title || 'Фото'; };
-        } else {
+      lbFallback.style.display = 'none';
+
+      if (item.src && !item.src.endsWith('/')) {
+        lbImg.src = item.src;
+        lbImg.style.display = 'block';
+        lbImg.onload  = () => { lbImg.style.opacity = '1'; };
+        lbImg.onerror = () => {
+          lbImg.style.display = 'none';
           lbFallback.style.display = 'flex';
           lbFallback.textContent = item.title || 'Фото';
-        }
-        lbImg.classList.remove('fading');
-      }, 120);
+        };
+        setTimeout(() => { if (!lbImg.complete) lbImg.style.opacity = '1'; }, 300);
+      } else {
+        lbFallback.style.display = 'flex';
+        lbFallback.textContent = item.title || 'Фото';
+      }
     }
 
     function closeLB() {
       lb.classList.remove('active');
       document.body.style.overflow = '';
+      lbImg.src = '';
     }
 
     function prevLB() { lbIdx = (lbIdx - 1 + lbItems.length) % lbItems.length; showLB(); }
     function nextLB() { lbIdx = (lbIdx + 1) % lbItems.length; showLB(); }
 
     document.getElementById('lbClose').addEventListener('click', closeLB);
-    document.getElementById('lbPrev').addEventListener('click', prevLB);
-    document.getElementById('lbNext').addEventListener('click', nextLB);
-    lb.addEventListener('click', e => { if (e.target === lb) closeLB(); });
+    document.getElementById('lbPrev').addEventListener('click', e => { e.stopPropagation(); prevLB(); });
+    document.getElementById('lbNext').addEventListener('click', e => { e.stopPropagation(); nextLB(); });
+    lb.addEventListener('click', e => { if (e.target === lb || e.target === lbImg) closeLB(); });
 
     document.addEventListener('keydown', e => {
       if (!lb.classList.contains('active')) return;
-      if (e.key === 'ArrowLeft')  prevLB();
-      if (e.key === 'ArrowRight') nextLB();
-      if (e.key === 'Escape')     closeLB();
+      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')    prevLB();
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  nextLB();
+      if (e.key === 'Escape') closeLB();
     });
 
     // Свайп на мобильных
-    let touchStartX = 0;
-    lb.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    let tsX = 0, tsY = 0;
+    lb.addEventListener('touchstart', e => { tsX = e.touches[0].clientX; tsY = e.touches[0].clientY; }, { passive: true });
     lb.addEventListener('touchend', e => {
-      const dx = e.changedTouches[0].clientX - touchStartX;
-      if (Math.abs(dx) > 50) dx < 0 ? nextLB() : prevLB();
+      const dx = e.changedTouches[0].clientX - tsX;
+      const dy = e.changedTouches[0].clientY - tsY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) dx < 0 ? nextLB() : prevLB();
     });
+
+    // Добавляем CSS для плавного перехода картинки
+    lbImg.style.transition = 'opacity .22s ease';
 
     buildGallery();
   </script>
